@@ -9,13 +9,15 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vladmelnykk.stickhabit"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.vladmelnykk.stickhabit"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +33,23 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-sqlite",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Roboto/Roboto-Regular.ttf",
+            "./assets/fonts/Roboto/Roboto-Bold.ttf",
+            "./assets/fonts/Roboto/Roboto-Medium.ttf",
+            "./assets/fonts/Roboto/Roboto-SemiBold.ttf",
+            "./assets/fonts/Roboto/Roboto-Light.ttf",
+            "./assets/fonts/Roboto/Roboto-Thin.ttf",
+            "./assets/fonts/Roboto/Roboto-ExtraLight.ttf",
+            "./assets/fonts/Roboto/Roboto-ExtraBold.ttf",
+            "./assets/fonts/Roboto/Roboto-Black.ttf"
+          ]
         }
       ]
     ],

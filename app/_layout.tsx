@@ -1,39 +1,73 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Colors } from '@/constants/Colors'
+import { useColorScheme } from '@/hooks/useColorScheme'
+import {
+  DefaultTheme,
+  DarkTheme as NavigationDarkTheme,
+  ThemeProvider
+} from '@react-navigation/native'
+import { drizzle } from 'drizzle-orm/expo-sqlite'
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
+import { SplashScreen, Stack } from 'expo-router'
+import * as SQLite from 'expo-sqlite'
+import React, { useEffect } from 'react'
+import { StyleSheet } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import migrations from '../drizzle/migrations'
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+const DarkTheme: typeof NavigationDarkTheme = {
+  ...NavigationDarkTheme,
+  colors: {
+    ...NavigationDarkTheme.colors,
+    background: Colors.dark.background,
+    card: Colors.dark.background,
+    primary: Colors.dark.tint,
+    text: Colors.dark.text
+  }
+}
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const LightTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: Colors.light.background,
+    card: Colors.light.background,
+    primary: Colors.light.tint,
+    text: Colors.light.text
+  }
+}
 
+const expo = SQLite.openDatabaseSync('db.db', { enableChangeListener: true })
+export const db = drizzle(expo)
+
+SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const { success, error } = useMigrations(db, migrations)
+  const theme = useColorScheme()
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (success) {
+      SplashScreen.hideAsync()
+      // ;(async () => {
+      //   await db.delete(habits)
+      // })()
     }
-  }, [loaded]);
+  }, [success])
+  console.log(error)
 
-  if (!loaded) {
-    return null;
+  if (!success) {
+    return null
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
+    <ThemeProvider value={theme === 'dark' ? DarkTheme : LightTheme}>
+      <GestureHandlerRootView style={styles.container}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="habit" options={{ headerShown: false }} />
+        </Stack>
+      </GestureHandlerRootView>
     </ThemeProvider>
-  );
+  )
 }
+
+const styles = StyleSheet.create({ container: { flex: 1 } })
