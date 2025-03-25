@@ -52,9 +52,9 @@ export default function RootLayout() {
       // })()
     }
   }, [success])
-  console.log(error)
 
   if (!success) {
+    console.log('error', error)
     return null
   }
 

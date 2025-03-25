@@ -9,7 +9,7 @@ import { Pressable, StyleSheet } from 'react-native'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 const LIST_ITEM_HEIGHT = 50
-
+const ICON_COLOR = '#212121'
 const ListColorItem = ({
   index,
   item,
@@ -61,7 +61,7 @@ const ListColorItem = ({
       <ColorCircle key={index} color={item} size={LIST_ITEM_HEIGHT} />
       {color === item && (
         <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.chosenColor}>
-          <Icon name="check" size={LIST_ITEM_HEIGHT / 2} color={Colors.light.text} />
+          <Icon name="check" size={LIST_ITEM_HEIGHT / 2} color={ICON_COLOR} />
         </Animated.View>
       )}
     </Pressable>

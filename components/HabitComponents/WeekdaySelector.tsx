@@ -4,18 +4,17 @@ import React, { useLayoutEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import SquareButton from '../ui/SquareButton'
 
-export const DAYS_OF_WEEK = [
-  { id: '0', name: 'S' },
-  { id: '1', name: 'M' },
-  { id: '2', name: 'T' },
-  { id: '3', name: 'W' },
-  { id: '4', name: 'T' },
-  { id: '5', name: 'F' },
-  { id: '6', name: 'S' }
-]
-
 const GAP = 8
 
+const DAYS_OF_WEEK = [
+  { id: '0', name: 'S', label: 'Sun' },
+  { id: '1', name: 'M', label: 'Mon' },
+  { id: '2', name: 'T', label: 'Tue' },
+  { id: '3', name: 'W', label: 'Wed' },
+  { id: '4', name: 'T', label: 'Thu' },
+  { id: '5', name: 'F', label: 'Fri' },
+  { id: '6', name: 'S', label: 'Sat' }
+]
 interface WeekdaySelectorProps {
   selectedDays: boolean[]
   setSelectedDays: React.Dispatch<React.SetStateAction<boolean[]>>

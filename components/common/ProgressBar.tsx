@@ -1,28 +1,51 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
-import Animated, { LinearTransition } from 'react-native-reanimated'
+import { View } from 'react-native'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withClamp,
+  withSpring
+} from 'react-native-reanimated'
 import { ThemedText } from '../ui/ThemedText'
 
 interface Props {
-  currentDate: Date
+  date?: Date
+  goal: number
+  current: number
 }
 
-const ProgressBar = ({ currentDate }: Props) => {
+const ProgressBar = ({ date = new Date(), goal, current }: Props) => {
   const theme = useColorScheme()
-
-  const formattedDate = currentDate.toLocaleString(undefined, {
+  const width = useSharedValue(0)
+  const formattedDate = date.toLocaleString(undefined, {
     weekday: 'long',
     month: 'long',
     day: 'numeric'
+  })
+  const percentage =
+    goal === 0 ? '0%' : (current / goal).toLocaleString(undefined, { style: 'percent' })
+
+  const animatedStyle = useAnimatedStyle(() => {
+    width.value = withClamp(
+      { min: 0 },
+      withSpring((current / goal) * 100, {
+        stiffness: 200,
+        damping: 20
+      })
+    )
+
+    return {
+      width: `${width.value}%`
+    }
   })
 
   return (
     <View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
         <ThemedText>{formattedDate}</ThemedText>
-        <ThemedText>{'Progress: ' + 0 + '%'}</ThemedText>
+        <ThemedText>{`Progress: ${percentage}`}</ThemedText>
       </View>
       <View
         style={{
@@ -35,13 +58,16 @@ const ProgressBar = ({ currentDate }: Props) => {
         }}
       >
         <Animated.View
-          layout={LinearTransition.duration(500)}
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            backgroundColor: Colors[theme].tint,
-            width: '0%'
-          }}
+          // layout={LinearTransition.duration(500)}
+          style={[
+            {
+              flex: 1,
+              flexDirection: 'row',
+              backgroundColor: Colors[theme].tint
+              // width: 0
+            },
+            animatedStyle
+          ]}
         />
       </View>
     </View>
@@ -49,5 +75,3 @@ const ProgressBar = ({ currentDate }: Props) => {
 }
 
 export default ProgressBar
-
-const styles = StyleSheet.create({})

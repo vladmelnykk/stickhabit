@@ -1,11 +1,9 @@
 import { Colors } from '@/constants/Colors'
-import { FontFamily } from '@/constants/FontFamily'
+import { CONTAINER_PADDING } from '@/constants/global'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { TabBar, TabView as TabViewRN } from 'react-native-tab-view'
-
-// const MARGIN_HORIZONTAL = 20
 
 const TabView = ({
   navigationState,
@@ -21,27 +19,28 @@ const TabView = ({
       navigationState={navigationState}
       renderScene={renderScene}
       onIndexChange={onIndexChange}
-      commonOptions={{ labelStyle: { fontFamily: FontFamily.RobotoSemiBold } }}
       style={[styles.container, style]}
       renderTabBar={props => (
-        <TabBar
-          {...props}
-          style={[
-            styles.tabBar,
-            {
-              backgroundColor: Colors[theme].secondary
-            }
-          ]}
-          indicatorStyle={[
-            styles.indicator,
-            {
-              backgroundColor: Colors[theme].tint
-            }
-          ]}
-          activeColor={Colors[theme].text}
-          inactiveColor={Colors[theme].text}
-          android_ripple={{ foreground: true }}
-        />
+        <View style={styles.verticalOffset}>
+          <TabBar
+            {...props}
+            style={[
+              styles.tabBar,
+              {
+                backgroundColor: Colors[theme].secondary
+              }
+            ]}
+            indicatorStyle={[
+              styles.indicator,
+              {
+                backgroundColor: Colors[theme].tint
+              }
+            ]}
+            activeColor={Colors[theme].text}
+            inactiveColor={Colors[theme].text}
+            android_ripple={{ foreground: true }}
+          />
+        </View>
       )}
       {...rest}
     />
@@ -59,7 +58,9 @@ const styles = StyleSheet.create({
     elevation: 0,
     shadowColor: 'transparent',
     borderRadius: 8
-    // marginHorizontal: MARGIN_HORIZONTAL
+  },
+  verticalOffset: {
+    paddingHorizontal: CONTAINER_PADDING
   },
   indicator: {
     height: '100%',

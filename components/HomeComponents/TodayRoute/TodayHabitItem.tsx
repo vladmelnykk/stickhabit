@@ -1,0 +1,158 @@
+import { db } from '@/app/_layout'
+import HabitCard from '@/components/common/HabitCard'
+import Icon from '@/components/ui/Icon'
+import { ThemedText } from '@/components/ui/ThemedText'
+import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
+import { habits } from '@/db/schema/habits'
+import { eq } from 'drizzle-orm'
+import React from 'react'
+import { StyleSheet, ToastAndroid, View } from 'react-native'
+import ReanimatedSwipeable, {
+  type SwipeableMethods
+} from 'react-native-gesture-handler/ReanimatedSwipeable'
+import Animated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated'
+interface HabitItemProps {
+  habit: TodayHabit
+}
+
+function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: drag.value - (WINDOW_WIDTH - CONTAINER_PADDING * 2) }]
+    }
+  })
+  return (
+    <Animated.View style={[styles.leftAction, animatedStyle]}>
+      <Icon name="x" color="white" size={38} />
+    </Animated.View>
+  )
+}
+
+function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: drag.value + WINDOW_WIDTH - CONTAINER_PADDING * 2 }]
+    }
+  })
+
+  return (
+    <Animated.View style={[styles.rightAction, animatedStyle]}>
+      <Icon name="check" color="white" size={38} />
+      <ThemedText type="defaultSemiBold" lightColor="#fff" darkColor="#fff">
+        Swipe to complete
+      </ThemedText>
+    </Animated.View>
+  )
+}
+
+const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
+  const swipeableRef = React.useRef<SwipeableMethods>(null)
+
+  const handleSwipe = async (direction: string) => {
+    console.log(direction)
+
+    if (direction === 'left') {
+      const updatedDates = habit.completedDates.find(el => el.date === habit.currentDate.date)
+
+      if (updatedDates) {
+        if (updatedDates.times < habit.timesPerDay) {
+          updatedDates.times += 1
+        } else {
+          ToastAndroid.show('You have already completed this habit today', ToastAndroid.SHORT)
+        }
+      } else {
+        habit.completedDates.push({ date: new Date().getTime(), times: 1 })
+      }
+
+      await db
+        .update(habits)
+        .set({
+          completedDates: habit.completedDates
+        })
+        .where(eq(habits.id, habit.id))
+
+      swipeableRef.current?.close()
+    } else {
+      const updatedDates = habit.completedDates.find(el => el.date === habit.currentDate.date)
+
+      if (updatedDates && updatedDates.times > 0) {
+        updatedDates.times -= 1
+        await db
+          .update(habits)
+          .set({
+            completedDates: habit.completedDates
+          })
+          .where(eq(habits.id, habit.id))
+      }
+
+      swipeableRef.current?.close()
+    }
+  }
+
+  return (
+    <View style={styles.renderItemContainer}>
+      <HabitCard
+        color={habit.color}
+        title={habit.title}
+        progress={habit.currentDate.times}
+        goal={habit.timesPerDay}
+      />
+      <ReanimatedSwipeable
+        ref={swipeableRef}
+        containerStyle={StyleSheet.absoluteFillObject}
+        renderRightActions={RightAction}
+        overshootRight={false}
+        renderLeftActions={LeftAction}
+        overshootLeft={false}
+        friction={1}
+        enableTrackpadTwoFingerGesture
+        onSwipeableOpen={handleSwipe}
+      />
+      <View style={styles.cardOverlay} />
+    </View>
+  )
+}
+
+export default TodayHabitItem
+
+const styles = StyleSheet.create({
+  renderItemContainer: {
+    width: '100%',
+    overflow: 'hidden',
+    borderRadius: 16,
+    position: 'relative'
+  },
+  rightAction: {
+    backgroundColor: '#15d18e',
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    paddingLeft: 16,
+    justifyContent: 'flex-start',
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16
+  },
+  leftAction: {
+    backgroundColor: '#f75555',
+    height: '100%',
+    width: '100%',
+    alignItems: 'flex-end',
+    paddingRight: 16,
+    justifyContent: 'center',
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16
+  },
+  cardOverlay: {
+    position: 'absolute',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.001)',
+    opacity: 0.1,
+    zIndex: 100,
+    top: 0,
+    bottom: 0,
+    left: '10%',
+    right: '10%'
+  }
+})

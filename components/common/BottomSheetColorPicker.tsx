@@ -9,7 +9,6 @@ import ThemedButton from '../ui/ThemedButton'
 import CustomBackdrop from './CustomBackdrop'
 
 interface Props {
-  // color: string | null
   setColor: React.Dispatch<React.SetStateAction<string | null>>
 }
 
@@ -37,7 +36,7 @@ const BottomSheetColorPicker = forwardRef<BottomSheet, Props>(function BottomShe
       <BottomSheetView style={styles.bottomSheetView}>
         <ThemedButton
           title="Pick"
-          style={{ width: '100%', marginBottom: 20 }}
+          style={styles.button}
           onPress={() => {
             setColor(pickedColor.value)
             bottomSheetRef.current?.close()
@@ -49,7 +48,7 @@ const BottomSheetColorPicker = forwardRef<BottomSheet, Props>(function BottomShe
             pickedColor.value = color.hex
           }}
         >
-          <Preview hideInitialColor />
+          <Preview hideInitialColor style={{ borderEndEndRadius: 0, borderStartEndRadius: 0 }} />
           <View style={styles.colorContainer}>
             <Panel1 boundedThumb style={styles.colorPanel} />
             <HueSlider boundedThumb vertical thumbShape="rect" thumbInnerStyle={{ height: 8 }} />
@@ -68,7 +67,8 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     alignItems: 'center'
   },
-  colorPicker: { width: '80%' },
-  colorContainer: { flexDirection: 'row', gap: 8 },
-  colorPanel: { flex: 1 }
+  colorPicker: { width: '85%' },
+  colorContainer: { flexDirection: 'row', gap: 4 },
+  colorPanel: { flex: 1 },
+  button: { width: '100%', marginBottom: 20 }
 })

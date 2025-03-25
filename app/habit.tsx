@@ -2,7 +2,7 @@ import Header from '@/components/common/Header'
 import DateTimePickerIOS from '@/components/HabitComponents/DateTimePickerIOS'
 import ListColorItem from '@/components/HabitComponents/ListColorItem'
 import ReminderCard from '@/components/HabitComponents/ReminderCard'
-import WeekdaySelector, { DAYS_OF_WEEK } from '@/components/HabitComponents/WeekdaySelector'
+import WeekdaySelector from '@/components/HabitComponents/WeekdaySelector'
 import Checkbox from '@/components/ui/Checkbox'
 import Icon from '@/components/ui/Icon'
 import Input from '@/components/ui/Input'
@@ -37,7 +37,7 @@ const BottomSheetColorPicker = lazy(() => import('@/components/common/BottomShee
 // TODO: create component provider for padding
 const CONTAINER_PADDING = 18
 const COLORS = [...HabitColors, COLOR_WHEEL]
-const DAYS = DAYS_OF_WEEK.length
+const DAYS = 7
 
 const Page = () => {
   const theme = useColorScheme()
