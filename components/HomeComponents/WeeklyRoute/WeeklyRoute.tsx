@@ -1,22 +1,25 @@
 import { useHabitStore } from '@/store/habitStore'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { endOfISOWeek, startOfISOWeek } from 'date-fns'
 import React, { useMemo } from 'react'
 import { FlatList, StyleSheet } from 'react-native'
 import WeeklyHabitItem from './WeeklyHabitItem'
 
-const WeeklyRoute = () => {
+interface WeeklyRouteProps {
+  route: string
+  setListRef: (key: string) => (ref: FlatList | null) => void
+}
+const WeeklyRoute: React.FC<WeeklyRouteProps> = ({ setListRef, route }) => {
   const habits = useHabitStore(state => state.habits)
   const tabBarHeight = useBottomTabBarHeight()
   const weeklyHabits: WeeklyHabit[] = useMemo(() => {
     if (!habits) return []
 
     const today = new Date()
-    const startOfWeek = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - today.getDay() + 1
-    )
-    const endOfWeek = new Date(startOfWeek.getTime() + 6 * 24 * 60 * 60 * 1000)
+
+    const startOfWeek = startOfISOWeek(today)
+
+    const endOfWeek = endOfISOWeek(today)
 
     const weeklyHabits = habits.map(habit => {
       const completedDaysThisWeek = habit.completedDates
@@ -37,15 +40,18 @@ const WeeklyRoute = () => {
 
   return (
     <FlatList
+      ref={setListRef(route)}
       style={styles.flatList}
-      contentContainerStyle={[styles.flatListContent, { paddingBottom: tabBarHeight + 10 }]}
+      overScrollMode="never"
+      contentContainerStyle={[styles.flatListContent, { paddingBottom: tabBarHeight * 1.5 }]}
       data={weeklyHabits}
       renderItem={({ item }) => <WeeklyHabitItem habit={item} />}
+      showsVerticalScrollIndicator={false}
     />
   )
 }
 
-export default WeeklyRoute
+export default React.memo(WeeklyRoute)
 
 const styles = StyleSheet.create({
   flatList: {

@@ -6,11 +6,12 @@ import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
 import { habits } from '@/db/schema/habits'
 import { eq } from 'drizzle-orm'
 import React from 'react'
-import { StyleSheet, ToastAndroid, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import ReanimatedSwipeable, {
   type SwipeableMethods
 } from 'react-native-gesture-handler/ReanimatedSwipeable'
 import Animated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import Toast from 'react-native-toast-message'
 interface HabitItemProps {
   habit: TodayHabit
 }
@@ -49,16 +50,27 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
   const swipeableRef = React.useRef<SwipeableMethods>(null)
 
   const handleSwipe = async (direction: string) => {
-    console.log(direction)
-
     if (direction === 'left') {
       const updatedDates = habit.completedDates.find(el => el.date === habit.currentDate.date)
 
       if (updatedDates) {
         if (updatedDates.times < habit.timesPerDay) {
           updatedDates.times += 1
+          if (updatedDates.times === habit.timesPerDay) {
+            Toast.show({
+              type: 'success',
+              text1: 'Success!',
+              text2: `You have completed ${habit.title}`
+            })
+          }
         } else {
-          ToastAndroid.show('You have already completed this habit today', ToastAndroid.SHORT)
+          Toast.show({
+            type: 'error',
+            text1: 'Oops!',
+            text2: 'You have already completed this habit today'
+          })
+          swipeableRef.current?.close()
+          return
         }
       } else {
         habit.completedDates.push({ date: new Date().getTime(), times: 1 })
@@ -70,23 +82,24 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
           completedDates: habit.completedDates
         })
         .where(eq(habits.id, habit.id))
+    } else if (
+      habit.completedDates.some(el => el.date === habit.currentDate.date && el.times > 0)
+    ) {
+      const updatedDates = habit.completedDates.find(el => el.date === habit.currentDate.date)!
 
-      swipeableRef.current?.close()
-    } else {
-      const updatedDates = habit.completedDates.find(el => el.date === habit.currentDate.date)
-
-      if (updatedDates && updatedDates.times > 0) {
-        updatedDates.times -= 1
-        await db
-          .update(habits)
-          .set({
-            completedDates: habit.completedDates
-          })
-          .where(eq(habits.id, habit.id))
+      updatedDates.times -= 1
+      if (updatedDates.times === 0) {
+        habit.completedDates.splice(habit.completedDates.indexOf(updatedDates), 1)
       }
 
-      swipeableRef.current?.close()
+      await db
+        .update(habits)
+        .set({
+          completedDates: habit.completedDates
+        })
+        .where(eq(habits.id, habit.id))
     }
+    swipeableRef.current?.close()
   }
 
   return (

@@ -16,8 +16,3 @@ interface TodayHabit extends Habit {
 interface WeeklyHabit extends Habit {
   completedDaysThisWeek: number[]
 }
-
-interface CurrentProgress {
-  current: number
-  goal: number
-}

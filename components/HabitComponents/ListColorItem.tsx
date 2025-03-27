@@ -2,13 +2,14 @@ import ColorWheelSvg from '@/components/svg/ColorWheelSvg'
 import ColorCircle from '@/components/ui/ColorCircle'
 import Icon from '@/components/ui/Icon'
 import { Colors } from '@/constants/Colors'
+import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
 import { COLOR_WHEEL, HabitColors } from '@/constants/HabitColors'
 import BottomSheet from '@gorhom/bottom-sheet'
 import React from 'react'
 import { Pressable, StyleSheet } from 'react-native'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
-const LIST_ITEM_HEIGHT = 50
+const LIST_ITEM_HEIGHT = (WINDOW_WIDTH - CONTAINER_PADDING * 2) / 7
 const ICON_COLOR = '#212121'
 const ListColorItem = ({
   index,

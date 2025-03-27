@@ -12,11 +12,10 @@ import { ThemedText } from '../ui/ThemedText'
 
 interface Props {
   date?: Date
-  goal: number
-  current: number
+  progress: number
 }
 
-const ProgressBar = ({ date = new Date(), goal, current }: Props) => {
+const ProgressBar = ({ date = new Date(), progress }: Props) => {
   const theme = useColorScheme()
   const width = useSharedValue(0)
   const formattedDate = date.toLocaleString(undefined, {
@@ -24,13 +23,11 @@ const ProgressBar = ({ date = new Date(), goal, current }: Props) => {
     month: 'long',
     day: 'numeric'
   })
-  const percentage =
-    goal === 0 ? '0%' : (current / goal).toLocaleString(undefined, { style: 'percent' })
 
   const animatedStyle = useAnimatedStyle(() => {
     width.value = withClamp(
       { min: 0 },
-      withSpring((current / goal) * 100, {
+      withSpring(progress, {
         stiffness: 200,
         damping: 20
       })
@@ -45,7 +42,7 @@ const ProgressBar = ({ date = new Date(), goal, current }: Props) => {
     <View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
         <ThemedText>{formattedDate}</ThemedText>
-        <ThemedText>{`Progress: ${percentage}`}</ThemedText>
+        <ThemedText>{`Progress: ${progress.toFixed(0)}%`}</ThemedText>
       </View>
       <View
         style={{

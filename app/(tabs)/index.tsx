@@ -1,5 +1,6 @@
 import Header from '@/components/common/Header'
 import ProgressBar from '@/components/common/ProgressBar'
+import OverallRoute from '@/components/HomeComponents/OverallRoute/OverallRoute'
 import TodayRoute from '@/components/HomeComponents/TodayRoute/TodayRoute'
 import WeeklyRoute from '@/components/HomeComponents/WeeklyRoute/WeeklyRoute'
 import RoundPlusButton from '@/components/ui/RoundPlusButton'
@@ -13,17 +14,12 @@ import { useHabitStore } from '@/store/habitStore'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite'
 import { router } from 'expo-router'
-import React, { useEffect } from 'react'
-import { Image, StatusBar, StyleSheet, View } from 'react-native'
+import React, { useCallback, useEffect } from 'react'
+import { FlatList, Image, StatusBar, StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Route, SceneRendererProps } from 'react-native-tab-view'
 import { db } from '../_layout'
-
-const SecondRoute = React.memo(function SecondRoute() {
-  console.log('second route rendered')
-
-  return <View style={[{ flex: 1, backgroundColor: 'white' }]} />
-})
 
 // const renderScene = SceneMap({
 //   today: TodayRoute,
@@ -37,48 +33,52 @@ const routes = [
   { key: 'overall', title: 'Overall' }
 ]
 
-// TODO: Bad name for progress interface, use another way to save progress
-
 export default function Home() {
   const tabBarHeight = useBottomTabBarHeight()
   const insets = useSafeAreaInsets()
   const theme = useColorScheme()
 
+  const routesRef = React.useRef<{ [key: string]: FlatList | null }>({})
+
   const setHabits = useHabitStore(state => state.setHabits)
-  const { data } = useLiveQuery(
-    db.select().from(habits)
-    // .where(sql`
-    //     EXISTS (
-    //       SELECT 1 FROM json_each(habits.daysOfWeek)
-    //       WHERE json_each.value = ${new Date().getDay()}
-    //     )
-    //   `)
-  )
+
+  // TODO: change new Date().getDay() to current day
+  const { data } = useLiveQuery(db.select().from(habits), [new Date().getDay()])
 
   const [tabBarIndex, setTabBarIndex] = React.useState(0)
-  const [progress, setProgress] = React.useState<CurrentProgress>({
-    current: 0,
-    goal: 1
-  })
+  const [progress, setProgress] = React.useState<number>(0)
 
   const handleCreateHabitPress = () => {
     router.push('/habit')
   }
+  const handleTabPress = (routeKey: string) => {
+    if (routesRef.current[routeKey] && routes[tabBarIndex].key === routeKey) {
+      routesRef.current[routeKey]?.scrollToOffset({ offset: 0, animated: true })
+    }
+  }
+  const setListRef = useCallback(
+    (key: string) => (ref: FlatList | null) => {
+      routesRef.current[key] = ref
+    },
+    []
+  )
 
   useEffect(() => {
     if (data) {
+      console.log('new data')
+
       setHabits(data)
     }
   }, [data, setHabits])
 
-  const renderScene = ({ route }: { route: { key: string } }) => {
+  const renderScene = ({ route }: SceneRendererProps & { route: Route }) => {
     switch (route.key) {
       case 'today':
-        return <TodayRoute setProgress={setProgress} />
+        return <TodayRoute route={route.key} setProgress={setProgress} setListRef={setListRef} />
       case 'weekly':
-        return <WeeklyRoute />
+        return <WeeklyRoute route={route.key} setListRef={setListRef} />
       case 'overall':
-        return <SecondRoute />
+        return <OverallRoute route={route.key} setListRef={setListRef} />
       default:
         return null
     }
@@ -100,25 +100,27 @@ export default function Home() {
         />
       </Animated.View>
       <Animated.View style={styles.verticalOffset} entering={FadeInDown}>
-        <ProgressBar goal={progress.goal} current={progress.current} />
+        <ProgressBar progress={progress} />
       </Animated.View>
 
       {/* TODO: RENDER LAZY PLACEHOLDER */}
-      {/* <Animated.View entering={FadeInDown} style={{ flex: 1 }}> */}
-      <TabView
-        commonOptions={{
-          labelStyle: { fontFamily: FontFamily.RobotoSemiBold },
-          sceneStyle: { paddingHorizontal: CONTAINER_PADDING }
-        }}
-        pageMargin={CONTAINER_PADDING}
-        navigationState={{ index: tabBarIndex, routes }}
-        renderScene={renderScene}
-        onIndexChange={setTabBarIndex}
-        initialLayout={{ width: WINDOW_WIDTH }}
-        // lazy={true}
-        // renderLazyPlaceholder={() => <ThemedText>Loading...</ThemedText>}
-      />
-      {/* </Animated.View> */}
+      <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
+        <TabView
+          handleTabPress={handleTabPress}
+          overScrollMode="never"
+          commonOptions={{
+            labelStyle: { fontFamily: FontFamily.RobotoSemiBold },
+            sceneStyle: { paddingHorizontal: CONTAINER_PADDING }
+          }}
+          pageMargin={CONTAINER_PADDING}
+          navigationState={{ index: tabBarIndex, routes }}
+          renderScene={renderScene}
+          onIndexChange={setTabBarIndex}
+          initialLayout={{ width: WINDOW_WIDTH }}
+          // lazy={true}
+          // renderLazyPlaceholder={() => <ThemedText>Loading...</ThemedText>}
+        />
+      </Animated.View>
       <RoundPlusButton
         style={{
           position: 'absolute',

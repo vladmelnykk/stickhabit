@@ -1,21 +1,22 @@
 import { ThemedText } from '@/components/ui/ThemedText'
 import { useHabitStore } from '@/store/habitStore'
+import { isToday } from 'date-fns'
 import React, { useCallback } from 'react'
-import { StyleSheet } from 'react-native'
+import { FlatList, StyleSheet } from 'react-native'
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated'
 import TodayHabitItem from './TodayHabitItem'
 
 interface TodayRouteProps {
-  setProgress: React.Dispatch<React.SetStateAction<CurrentProgress>>
+  setProgress: React.Dispatch<React.SetStateAction<number>>
+  route: string
+  setListRef: (key: string) => (ref: FlatList | null) => void
 }
 
-const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress }) => {
+const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef }) => {
   const data = useHabitStore(state => state.habits)
-  console.log('todayRoute rendered')
 
   const [todayUncompletedHabits, setTodayUncompletedHabits] = React.useState<TodayHabit[]>([])
   const [todayCompletedHabits, setTodayCompletedHabits] = React.useState<TodayHabit[]>([])
-
   const renderItem = useCallback(({ item }: { item: TodayHabit }) => {
     return (
       <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
@@ -29,62 +30,52 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress }) => {
       const today = new Date()
 
       if (data === null || data.length === 0) return
+
       const todayHabits = data.filter(habit => {
         return habit.daysOfWeek.includes(today.getDay())
       })
 
       const completedHabits: TodayHabit[] = []
       const uncompletedHabits: TodayHabit[] = []
-      const currentProgress: CurrentProgress = { current: 0, goal: 0 }
+      const currentProgress = { current: 0, goal: 0 }
 
       todayHabits.forEach(habit => {
-        habit.completedDates.forEach(date => {
-          const dateObj = new Date(date.date)
-
-          // Проверяем, совпадает ли дата с сегодняшним днем
-          const isToday =
-            dateObj.getDate() === today.getDate() &&
-            dateObj.getMonth() === today.getMonth() &&
-            dateObj.getFullYear() === today.getFullYear()
-
-          // Разделяем привычки на выполненные и не выполненные
-          if (isToday) {
-            if (date.times === habit.timesPerDay) {
-              completedHabits.push({
-                ...habit,
-                currentDate: date
-              })
-            } else {
-              uncompletedHabits.push({
-                ...habit,
-                currentDate: date
-              })
-            }
-            currentProgress.goal += habit.timesPerDay
-            currentProgress.current += date.times
-          }
-        })
-
-        // Если для сегодняшнего дня ещё нет записи о выполнении, добавляем в невыполненные
+        // check if habit is completed today
         const isHabitCompletedToday = habit.completedDates.some(date => {
           const dateObj = new Date(date.date)
-          return (
-            dateObj.getDate() === today.getDate() &&
-            dateObj.getMonth() === today.getMonth() &&
-            dateObj.getFullYear() === today.getFullYear()
-          )
+          return isToday(dateObj)
         })
 
+        // if habit is not completed today add it to uncompleted habits
         if (!isHabitCompletedToday) {
           uncompletedHabits.push({
             ...habit,
             currentDate: { date: today.getTime(), times: 0 }
           })
           currentProgress.goal += habit.timesPerDay
+        } else {
+          habit.completedDates.forEach(dateObj => {
+            if (isToday(dateObj.date)) {
+              if (dateObj.times === habit.timesPerDay) {
+                completedHabits.push({
+                  ...habit,
+                  currentDate: dateObj
+                })
+              } else {
+                uncompletedHabits.push({
+                  ...habit,
+                  currentDate: dateObj
+                })
+              }
+              currentProgress.goal += habit.timesPerDay
+              currentProgress.current += dateObj.times
+            }
+          })
         }
       })
 
-      setProgress(currentProgress)
+      const percentage = (currentProgress.current / currentProgress.goal) * 100
+      setProgress(percentage)
       setTodayUncompletedHabits(uncompletedHabits)
       setTodayCompletedHabits(completedHabits)
     }
@@ -95,9 +86,10 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress }) => {
   return (
     <Animated.ScrollView contentContainerStyle={{ gap: 12 }}>
       <Animated.FlatList
-        // layout={LinearTransition}
+        ref={setListRef(route)}
         itemLayoutAnimation={LinearTransition}
         scrollEnabled={false}
+        overScrollMode="never"
         data={todayUncompletedHabits}
         keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
@@ -114,9 +106,9 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress }) => {
           <ThemedText type="subtitle">Completed</ThemedText>
           <Animated.FlatList
             skipEnteringExitingAnimations
-            // layout={LinearTransition}
             itemLayoutAnimation={LinearTransition}
             scrollEnabled={false}
+            overScrollMode="never"
             data={todayCompletedHabits}
             keyExtractor={item => item.id.toString()}
             renderItem={renderItem}

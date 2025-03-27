@@ -10,8 +10,9 @@ const TabView = ({
   renderScene,
   onIndexChange,
   style,
+  handleTabPress,
   ...rest
-}: React.ComponentProps<typeof TabViewRN>) => {
+}: React.ComponentProps<typeof TabViewRN> & { handleTabPress?: (routeKey: string) => void }) => {
   const theme = useColorScheme()
 
   return (
@@ -39,6 +40,9 @@ const TabView = ({
             activeColor={Colors[theme].text}
             inactiveColor={Colors[theme].text}
             android_ripple={{ foreground: true }}
+            onTabPress={({ route }) => {
+              handleTabPress?.(route.key)
+            }}
           />
         </View>
       )}

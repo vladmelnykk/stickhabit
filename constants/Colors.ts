@@ -5,7 +5,7 @@
 
 const tintColorLight = '#8a85ea'
 const secondaryColorLight = '#f5f5f5'
-const accentColorLight = '#f6f5fe'
+const accentColorLight = '#e0e0e0'
 
 const tintColorDark = '#8a85ea'
 const secondaryColorDark = '#20222a'

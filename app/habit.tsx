@@ -23,13 +23,13 @@ import {
   StatusBar,
   StyleSheet,
   Switch,
-  ToastAndroid,
   TouchableOpacity,
   View
 } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import Animated, { FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Toast from 'react-native-toast-message'
 import { db } from './_layout'
 
 const BottomSheetColorPicker = lazy(() => import('@/components/common/BottomSheetColorPicker'))
@@ -45,8 +45,8 @@ const Page = () => {
   const bottomSheetRef = useRef<BottomSheetMethods>(null)
 
   // TODO: change this to controlled inputs
-  const nameValueRef = useRef<string | null>(null)
-  const goalValueRef = useRef<string | null>(null)
+  const nameValue = useRef<string>('')
+  const goalValue = useRef<string>('')
   const [color, setColor] = useState<string | null>(null)
 
   const [isAllDaysSelected, setIsAllDaysSelected] = useState(false)
@@ -115,8 +115,11 @@ const Page = () => {
       if (!isDuplicate) {
         setReminders(prev => [...prev, date].sort((a, b) => a.getTime() - b.getTime()))
       } else {
-        // TODO: implement warning for IOS
-        ToastAndroid.show('Reminder already exists', ToastAndroid.SHORT)
+        Toast.show({
+          type: 'error',
+          text1: 'Oops!',
+          text2: 'Reminder already exists'
+        })
       }
     }
   }
@@ -144,7 +147,6 @@ const Page = () => {
     }
   }
 
-  // TODO: optimize and refactor date picker stuff
   const confirmDateIOS = () => {
     if (date) setReminders(prev => [...prev, date])
     setShowDatePicker(false)
@@ -161,29 +163,29 @@ const Page = () => {
 
   const handleSave = async () => {
     // TODO: input validation
-    const habitName = nameValueRef.current || ''
-    const goal = parseInt(goalValueRef.current || '0', 10)
+    const habitName = nameValue.current?.trim() || ''
+    const goal = Number(goalValue.current) || 0
 
-    if (!habitName) {
-      ToastAndroid.show('Please enter a habit name', ToastAndroid.SHORT)
+    const validationError = !habitName
+      ? 'Please enter a habit name'
+      : goal <= 0 || isNaN(goal)
+      ? 'Please enter a valid goal'
+      : !color
+      ? 'Please select a color'
+      : !selectedDays.includes(true)
+      ? 'Please select at least one day'
+      : null
+
+    if (validationError) {
+      Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: validationError
+      })
       return
     }
 
-    if (goal <= 0 || isNaN(goal)) {
-      ToastAndroid.show('Please enter a valid goal', ToastAndroid.SHORT)
-      return
-    }
-
-    if (!color) {
-      ToastAndroid.show('Please select a color', ToastAndroid.SHORT)
-      return
-    }
-
-    if (!selectedDays.some(day => day)) {
-      ToastAndroid.show('Please select at least one day', ToastAndroid.SHORT)
-      return
-    }
-
+    // Sun - 0, Mon - 1, Tue - 2, Wed - 3, Thu - 4, Fri - 5, Sat - 6
     const daysOfWeek = selectedDays
       .map((isSelected, index) => (isSelected ? index : null))
       .filter(day => day !== null)
@@ -193,9 +195,9 @@ const Page = () => {
     const habitData = {
       title: habitName,
       timesPerDay: goal,
-      color,
+      color: color!,
       daysOfWeek: daysOfWeek,
-      notificationTime: notificationTime,
+      notificationTime: isReminderEnabled ? notificationTime : [],
       completedDates: [],
       createdAt: new Date().getTime()
     } satisfies typeof habits.$inferInsert
@@ -205,13 +207,20 @@ const Page = () => {
     try {
       await db.insert(habits).values(habitData)
 
-      ToastAndroid.show('Habit saved successfully!', ToastAndroid.SHORT)
-
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Habit saved successfully!'
+      })
       router.back()
     } catch (error) {
       console.error('Error saving habit:', error)
 
-      ToastAndroid.show('Error saving habit', ToastAndroid.SHORT)
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong',
+        text2: 'Failed to save habit'
+      })
     }
   }
 
@@ -229,7 +238,7 @@ const Page = () => {
 
         <Animated.View style={styles.sectionContainer} entering={FadeInUp}>
           <ThemedText type="subtitle">Habit Name</ThemedText>
-          <Input placeholder="Habit Name" onChangeText={text => (nameValueRef.current = text)} />
+          <Input placeholder="Habit Name" onChangeText={text => (nameValue.current = text)} />
         </Animated.View>
 
         <Animated.View style={styles.sectionContainer} entering={FadeInUp}>
@@ -237,7 +246,7 @@ const Page = () => {
           <Input
             placeholder="Your Goal"
             keyboardType="number-pad"
-            onChangeText={text => (goalValueRef.current = text)}
+            onChangeText={text => (goalValue.current = text)}
           />
         </Animated.View>
 
@@ -313,8 +322,8 @@ const Page = () => {
             confirmDate={confirmDateIOS}
           />
         )}
+        <ThemedButton title="Create" onPress={handleSave} />
       </ScrollView>
-      <ThemedButton title="Save" onPress={handleSave} />
 
       <Suspense fallback={null}>
         <BottomSheetColorPicker setColor={setColor} ref={bottomSheetRef} />

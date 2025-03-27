@@ -9,9 +9,10 @@ import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
 import { SplashScreen, Stack } from 'expo-router'
 import * as SQLite from 'expo-sqlite'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
 import migrations from '../drizzle/migrations'
 
 const DarkTheme: typeof NavigationDarkTheme = {
@@ -44,6 +45,43 @@ export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations)
   const theme = useColorScheme()
 
+  // TODO: useMemo is needed?
+  const toastConfig = useMemo(
+    () => ({
+      success: (props: any) => (
+        <BaseToast
+          {...props}
+          style={{ backgroundColor: Colors[theme].accent, borderLeftColor: '#15d18e' }}
+          contentContainerStyle={{ paddingHorizontal: 15 }}
+          text1Style={{
+            color: Colors[theme].text,
+            fontSize: 16
+          }}
+          text2Style={{
+            color: Colors[theme].text,
+            fontSize: 14
+          }}
+        />
+      ),
+      error: (props: any) => (
+        <ErrorToast
+          {...props}
+          style={{ backgroundColor: Colors[theme].accent, borderLeftColor: '#ff9898' }}
+          contentContainerStyle={{ paddingHorizontal: 15 }}
+          text1Style={{
+            color: Colors[theme].text,
+            fontSize: 16
+          }}
+          text2Style={{
+            color: Colors[theme].text,
+            fontSize: 14
+          }}
+        />
+      )
+    }),
+    [theme]
+  )
+
   useEffect(() => {
     if (success) {
       SplashScreen.hideAsync()
@@ -65,6 +103,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="habit" options={{ headerShown: false }} />
         </Stack>
+        <Toast config={toastConfig} visibilityTime={1500} />
       </GestureHandlerRootView>
     </ThemeProvider>
   )
