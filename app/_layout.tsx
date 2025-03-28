@@ -7,6 +7,7 @@ import {
 } from '@react-navigation/native'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
+import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack } from 'expo-router'
 import * as SQLite from 'expo-sqlite'
 import React, { useEffect, useMemo } from 'react'
@@ -36,6 +37,25 @@ const LightTheme = {
     text: Colors.light.text
   }
 }
+
+async function registerForPushNotificationsAsync() {
+  const { status } = await Notifications.getPermissionsAsync()
+  if (status !== 'granted') {
+    const { status: newStatus } = await Notifications.requestPermissionsAsync()
+    if (newStatus !== 'granted') {
+      console.log('Permission for notifications was denied')
+      return
+    }
+  }
+}
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false
+  })
+})
 
 const expo = SQLite.openDatabaseSync('db.db', { enableChangeListener: true })
 export const db = drizzle(expo)
@@ -82,6 +102,10 @@ export default function RootLayout() {
   )
 
   useEffect(() => {
+    registerForPushNotificationsAsync()
+  }, [])
+
+  useEffect(() => {
     if (success) {
       SplashScreen.hideAsync()
       // ;(async () => {
@@ -90,6 +114,13 @@ export default function RootLayout() {
     }
   }, [success])
 
+  useEffect(() => {
+    async function getScheduledNotifications() {
+      const scheduled = await Notifications.getAllScheduledNotificationsAsync()
+      console.log(scheduled)
+    }
+    getScheduledNotifications()
+  }, [])
   if (!success) {
     console.log('error', error)
     return null

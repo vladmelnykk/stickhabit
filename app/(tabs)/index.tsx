@@ -15,7 +15,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite'
 import { router } from 'expo-router'
 import React, { useCallback, useEffect } from 'react'
-import { FlatList, Image, StatusBar, StyleSheet, View } from 'react-native'
+import { FlatList, Image, ScrollView, StatusBar, StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Route, SceneRendererProps } from 'react-native-tab-view'
@@ -38,7 +38,7 @@ export default function Home() {
   const insets = useSafeAreaInsets()
   const theme = useColorScheme()
 
-  const routesRef = React.useRef<{ [key: string]: FlatList | null }>({})
+  const routesRef = React.useRef<{ [key: string]: FlatList | ScrollView | null }>({})
 
   const setHabits = useHabitStore(state => state.setHabits)
 
@@ -51,12 +51,19 @@ export default function Home() {
     router.push('/habit')
   }
   const handleTabPress = (routeKey: string) => {
-    if (routesRef.current[routeKey] && routes[tabBarIndex].key === routeKey) {
-      routesRef.current[routeKey]?.scrollToOffset({ offset: 0, animated: true })
+    const ref = routesRef.current[routeKey]
+
+    if (ref && routes[tabBarIndex].key === routeKey) {
+      if ('scrollToOffset' in ref) {
+        ref.scrollToOffset({ offset: 0, animated: true })
+      } else if ('scrollTo' in ref) {
+        ref.scrollTo({ y: 0, animated: true })
+      }
     }
   }
+
   const setListRef = useCallback(
-    (key: string) => (ref: FlatList | null) => {
+    (key: string) => (ref: FlatList | ScrollView | null) => {
       routesRef.current[key] = ref
     },
     []

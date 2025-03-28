@@ -16,6 +16,7 @@ import { habits } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
+import * as Notifications from 'expo-notifications'
 import { router } from 'expo-router'
 import React, { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -32,12 +33,34 @@ import Animated, { FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 import { db } from './_layout'
-
 const BottomSheetColorPicker = lazy(() => import('@/components/common/BottomSheetColorPicker'))
 
 const COLORS = [...HabitColors, COLOR_WHEEL]
 const DAYS = 7
 const MAX_REMINDERS = 3
+
+async function scheduleHabitNotification(
+  title: string,
+  body: string,
+  time: Date,
+  daysOfWeek: number[]
+) {
+  for (const day of daysOfWeek) {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title,
+        body,
+        sound: 'default'
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: day + 1,
+        hour: time.getHours(),
+        minute: time.getMinutes()
+      }
+    })
+  }
+}
 
 const Page = () => {
   const theme = useColorScheme()
@@ -181,6 +204,7 @@ const Page = () => {
       return
     }
 
+    // Convert selected days to array of numbers
     // Sun - 0, Mon - 1, Tue - 2, Wed - 3, Thu - 4, Fri - 5, Sat - 6
     const daysOfWeek = selectedDays
       .map((isSelected, index) => (isSelected ? index : null))
@@ -204,6 +228,18 @@ const Page = () => {
       await db.insert(habits).values(habitData)
 
       Toast.show({ type: 'success', text1: 'Success', text2: 'Habit saved successfully!' })
+
+      if (isReminderEnabled) {
+        reminders.forEach(async reminder => {
+          await scheduleHabitNotification(
+            `Time for ${habitName}`,
+            'Stay consistent with your habit!',
+            reminder,
+            daysOfWeek
+          )
+        })
+      }
+
       router.back()
     } catch (error) {
       console.error('Error saving habit:', error)

@@ -1,20 +1,22 @@
 import { ThemedText } from '@/components/ui/ThemedText'
 import { useHabitStore } from '@/store/habitStore'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { isToday } from 'date-fns'
 import React, { useCallback } from 'react'
-import { FlatList, StyleSheet } from 'react-native'
+import { FlatList, ScrollView, StyleSheet } from 'react-native'
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated'
 import TodayHabitItem from './TodayHabitItem'
 
 interface TodayRouteProps {
   setProgress: React.Dispatch<React.SetStateAction<number>>
   route: string
-  setListRef: (key: string) => (ref: FlatList | null) => void
+  setListRef: (key: string) => (ref: FlatList | ScrollView | null) => void
 }
 
 const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef }) => {
   const data = useHabitStore(state => state.habits)
-
+  const tabBarHeight = useBottomTabBarHeight()
+  console.log('rederred today route')
   const [todayUncompletedHabits, setTodayUncompletedHabits] = React.useState<TodayHabit[]>([])
   const [todayCompletedHabits, setTodayCompletedHabits] = React.useState<TodayHabit[]>([])
   const renderItem = useCallback(({ item }: { item: TodayHabit }) => {
@@ -84,9 +86,15 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
   }, [data, setProgress])
 
   return (
-    <Animated.ScrollView contentContainerStyle={{ gap: 12 }} bounces={false}>
+    <Animated.ScrollView
+      ref={setListRef(route)}
+      style={styles.scrollView}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={[styles.listContainer, { paddingBottom: tabBarHeight * 2 }]}
+      overScrollMode="never"
+      bounces={false}
+    >
       <Animated.FlatList
-        ref={setListRef(route)}
         itemLayoutAnimation={LinearTransition}
         scrollEnabled={false}
         overScrollMode="never"
@@ -125,12 +133,15 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
 export default React.memo(TodayRoute)
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    marginTop: 12
+  },
   container: {
     flex: 1,
     overflow: 'hidden'
   },
   listContainer: {
-    gap: 12,
-    paddingVertical: 12
+    gap: 12
   }
 })

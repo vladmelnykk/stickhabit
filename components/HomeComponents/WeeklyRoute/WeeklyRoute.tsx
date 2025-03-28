@@ -44,7 +44,7 @@ const WeeklyRoute: React.FC<WeeklyRouteProps> = ({ setListRef, route }) => {
       style={styles.flatList}
       overScrollMode="never"
       bounces={false}
-      contentContainerStyle={[styles.flatListContent, { paddingBottom: tabBarHeight * 1.5 }]}
+      contentContainerStyle={[styles.flatListContent, { paddingBottom: tabBarHeight * 2 }]}
       data={weeklyHabits}
       renderItem={({ item }) => <WeeklyHabitItem habit={item} />}
       showsVerticalScrollIndicator={false}
