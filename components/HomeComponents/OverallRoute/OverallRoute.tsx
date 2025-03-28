@@ -18,6 +18,7 @@ const OverallRoute: React.FC<OverallRouteProps> = ({ setListRef, route }) => {
       ref={setListRef(route)}
       style={styles.flatList}
       overScrollMode="never"
+      bounces={false}
       contentContainerStyle={[styles.flatListContent, { paddingBottom: tabBarHeight * 2 }]}
       data={habits}
       renderItem={({ item }) => <OverallHabitItem habit={item} />}

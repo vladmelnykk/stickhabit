@@ -37,12 +37,13 @@ const WeeklyRoute: React.FC<WeeklyRouteProps> = ({ setListRef, route }) => {
 
     return weeklyHabits
   }, [habits])
-
+  console.log('rendered weekly route')
   return (
     <FlatList
       ref={setListRef(route)}
       style={styles.flatList}
       overScrollMode="never"
+      bounces={false}
       contentContainerStyle={[styles.flatListContent, { paddingBottom: tabBarHeight * 1.5 }]}
       data={weeklyHabits}
       renderItem={({ item }) => <WeeklyHabitItem habit={item} />}

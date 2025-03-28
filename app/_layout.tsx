@@ -45,7 +45,6 @@ export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations)
   const theme = useColorScheme()
 
-  // TODO: useMemo is needed?
   const toastConfig = useMemo(
     () => ({
       success: (props: any) => (

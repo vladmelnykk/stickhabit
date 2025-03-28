@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({
   )
 }
 
-export default Header
+export default React.memo(Header)
 
 const styles = StyleSheet.create({
   container: {

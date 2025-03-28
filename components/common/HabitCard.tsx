@@ -19,7 +19,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ title, color, goal, progress }) =
     </View>
   )
 }
-// TODO: is is okay to memo this?
+
 export default React.memo(HabitCard)
 
 const styles = StyleSheet.create({

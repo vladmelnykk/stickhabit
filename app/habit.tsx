@@ -10,6 +10,7 @@ import ThemedButton from '@/components/ui/ThemedButton'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { Colors } from '@/constants/Colors'
 import { FontFamily } from '@/constants/FontFamily'
+import { CONTAINER_PADDING } from '@/constants/global'
 import { COLOR_WHEEL, HabitColors } from '@/constants/HabitColors'
 import { habits } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -34,17 +35,15 @@ import { db } from './_layout'
 
 const BottomSheetColorPicker = lazy(() => import('@/components/common/BottomSheetColorPicker'))
 
-// TODO: create component provider for padding
-const CONTAINER_PADDING = 18
 const COLORS = [...HabitColors, COLOR_WHEEL]
 const DAYS = 7
+const MAX_REMINDERS = 3
 
 const Page = () => {
   const theme = useColorScheme()
   const insets = useSafeAreaInsets()
   const bottomSheetRef = useRef<BottomSheetMethods>(null)
 
-  // TODO: change this to controlled inputs
   const nameValue = useRef<string>('')
   const goalValue = useRef<string>('')
   const [color, setColor] = useState<string | null>(null)
@@ -56,8 +55,7 @@ const Page = () => {
 
   // TODO: determine how to handle reminders ( formats for ui, notifications, database etc. )
   const [reminders, setReminders] = useState<Date[]>([])
-  const [showDatePicker, setShowDatePicker] = useState(false)
-  const [date, setDate] = useState<Date | null>(null)
+  const [showIosDatePicker, setShowIosDatePicker] = useState(false)
 
   useEffect(() => {
     if (selectedDays.every(day => day)) {
@@ -94,67 +92,70 @@ const Page = () => {
     }
   }
 
+  const addReminder = (date: Date) => {
+    const newTime = date.toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+
+    const isDuplicate = reminders.some(reminder => {
+      const existingTime = reminder.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+      return existingTime === newTime
+    })
+
+    if (!isDuplicate) {
+      setReminders(prev => [...prev, date].sort((a, b) => a.getTime() - b.getTime()))
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Oops!',
+        text2: 'Reminder already exists'
+      })
+    }
+  }
+
   const handleDateChangeAndroid: React.ComponentProps<typeof DateTimePicker>['onChange'] = (
     { type },
     date
   ) => {
     if (type === 'set' && date) {
-      const newTime = date.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-
-      const isDuplicate = reminders.some(reminder => {
-        const existingTime = reminder.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-        return existingTime === newTime
-      })
-
-      if (!isDuplicate) {
-        setReminders(prev => [...prev, date].sort((a, b) => a.getTime() - b.getTime()))
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Oops!',
-          text2: 'Reminder already exists'
-        })
-      }
-    }
-  }
-
-  const handleDateChangeIOS: React.ComponentProps<typeof DateTimePicker>['onChange'] = (
-    { type },
-    date
-  ) => {
-    if (type === 'set') {
-      if (date) setDate(date)
-    } else {
-      setShowDatePicker(false)
+      addReminder(date)
     }
   }
 
   const handleAddReminder = () => {
+    if (reminders.length >= MAX_REMINDERS) {
+      Toast.show({
+        type: 'error',
+        text1: 'Oops!',
+        text2: `You can only add up to ${MAX_REMINDERS} reminders`
+      })
+      return
+    }
+
     if (Platform.OS === 'android') {
       DateTimePickerAndroid.open({
-        value: date || new Date(),
+        value: new Date(),
         mode: 'time',
         onChange: handleDateChangeAndroid
       })
     } else {
-      setShowDatePicker(true)
+      setShowIosDatePicker(true)
     }
   }
 
-  const confirmDateIOS = () => {
-    if (date) setReminders(prev => [...prev, date])
-    setShowDatePicker(false)
-    setDate(null)
+  const confirmDateIOS = (date: Date | null) => {
+    if (date) {
+      addReminder(date)
+    }
+    setShowIosDatePicker(false)
   }
 
   const toggleDatePicker = () => {
-    setShowDatePicker(prev => !prev)
+    setShowIosDatePicker(prev => !prev)
   }
 
   const handleRemoveReminder = (index: number) => {
@@ -162,7 +163,6 @@ const Page = () => {
   }
 
   const handleSave = async () => {
-    // TODO: input validation
     const habitName = nameValue.current?.trim() || ''
     const goal = Number(goalValue.current) || 0
 
@@ -177,11 +177,7 @@ const Page = () => {
       : null
 
     if (validationError) {
-      Toast.show({
-        type: 'error',
-        text1: 'Validation Error',
-        text2: validationError
-      })
+      Toast.show({ type: 'error', text1: 'Validation Error', text2: validationError })
       return
     }
 
@@ -207,30 +203,22 @@ const Page = () => {
     try {
       await db.insert(habits).values(habitData)
 
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: 'Habit saved successfully!'
-      })
+      Toast.show({ type: 'success', text1: 'Success', text2: 'Habit saved successfully!' })
       router.back()
     } catch (error) {
       console.error('Error saving habit:', error)
 
-      Toast.show({
-        type: 'error',
-        text1: 'Something went wrong',
-        text2: 'Failed to save habit'
-      })
+      Toast.show({ type: 'error', text1: 'Something went wrong', text2: 'Failed to save habit' })
     }
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar backgroundColor={Colors[theme].background} />
       <ScrollView
         automaticallyAdjustKeyboardInsets
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContainer, { paddingTop: insets.top }]}
+        contentContainerStyle={[styles.scrollContainer]}
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[0]}
       >
@@ -280,7 +268,7 @@ const Page = () => {
         </View>
         <WeekdaySelector selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
 
-        {Platform.OS === 'ios' && showDatePicker ? null : (
+        {Platform.OS === 'ios' && showIosDatePicker ? null : (
           <View style={styles.rowContainer}>
             <ThemedText type="subtitle">Set Reminder</ThemedText>
             <Switch
@@ -292,18 +280,28 @@ const Page = () => {
           </View>
         )}
 
-        {/* TODO: add limitation for number of reminders */}
-        {isReminderEnabled && !showDatePicker && (
+        {isReminderEnabled && !showIosDatePicker && (
           <View style={styles.sectionContainer}>
             <TouchableOpacity style={styles.rowContainer} onPress={handleAddReminder}>
               <ThemedText
-                lightColor={Colors.light.tint}
-                darkColor={Colors.dark.tint}
+                lightColor={
+                  reminders.length >= MAX_REMINDERS ? Colors.light.textSecondary : Colors.light.tint
+                }
+                darkColor={
+                  reminders.length >= MAX_REMINDERS ? Colors.dark.textSecondary : Colors.dark.tint
+                }
                 style={[styles.addReminderText]}
               >
                 Add new reminder
               </ThemedText>
-              <Icon name="plus-circle" color={Colors[theme].tint} />
+              <Icon
+                name="plus-circle"
+                color={
+                  reminders.length >= MAX_REMINDERS
+                    ? Colors.light.textSecondary
+                    : Colors[theme].tint
+                }
+              />
             </TouchableOpacity>
 
             <View style={styles.sectionContainer}>
@@ -314,10 +312,9 @@ const Page = () => {
           </View>
         )}
 
-        {isReminderEnabled && showDatePicker && (
+        {isReminderEnabled && showIosDatePicker && (
           <DateTimePickerIOS
-            date={date}
-            onChange={handleDateChangeIOS}
+            // onChange={handleDateChangeIOS}
             toggleDatePicker={toggleDatePicker}
             confirmDate={confirmDateIOS}
           />

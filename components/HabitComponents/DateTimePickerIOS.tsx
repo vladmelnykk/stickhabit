@@ -1,27 +1,37 @@
 import DateTimePicker from '@react-native-community/datetimepicker'
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, StyleSheet, View } from 'react-native'
 
 interface DateTimePickerIOSProps {
-  date: Date | null
-  onChange: React.ComponentProps<typeof DateTimePicker>['onChange']
+  // date: Date | null
+  // onChange: React.ComponentProps<typeof DateTimePicker>['onChange']
   toggleDatePicker: () => void
-  confirmDate: () => void
+  confirmDate: (date: Date | null) => void
 }
 
 const HEIGHT = 80
 
 const DateTimePickerIOS: React.FC<DateTimePickerIOSProps> = ({
-  date,
-  onChange,
+  // onChange,
   toggleDatePicker,
   confirmDate
 }) => {
+  const [date, setDate] = useState<Date | null>(new Date())
+
+  const handleDateChangeIOS: React.ComponentProps<typeof DateTimePicker>['onChange'] = (
+    { type },
+    date
+  ) => {
+    if (type === 'set' && date) {
+      setDate(date)
+    }
+  }
+
   return (
     <View>
       <View style={styles.pickerContainer}>
         <DateTimePicker
-          onChange={onChange}
+          onChange={handleDateChangeIOS}
           value={date || new Date()}
           mode="time"
           is24Hour
@@ -31,7 +41,7 @@ const DateTimePickerIOS: React.FC<DateTimePickerIOSProps> = ({
 
       <View style={styles.buttonContainer}>
         <Button title="Cancel" onPress={toggleDatePicker} />
-        <Button title="Confirm" onPress={confirmDate} />
+        <Button title="Confirm" onPress={() => confirmDate(date)} />
       </View>
     </View>
   )

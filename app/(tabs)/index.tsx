@@ -42,12 +42,11 @@ export default function Home() {
 
   const setHabits = useHabitStore(state => state.setHabits)
 
-  // TODO: change new Date().getDay() to current day
   const { data } = useLiveQuery(db.select().from(habits), [new Date().getDay()])
 
   const [tabBarIndex, setTabBarIndex] = React.useState(0)
   const [progress, setProgress] = React.useState<number>(0)
-
+  console.log('rendered index route')
   const handleCreateHabitPress = () => {
     router.push('/habit')
   }

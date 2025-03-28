@@ -19,8 +19,6 @@ interface WeeklyHabitItemProps {
   habit: WeeklyHabit
 }
 const WeeklyHabitItem: React.FC<WeeklyHabitItemProps> = ({ habit }) => {
-  console.log('render WeeklyHabitItem')
-
   return (
     <HabitOverviewCard habit={habit}>
       {DAYS_OF_WEEK.map(day => {

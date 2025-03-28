@@ -84,7 +84,7 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
   }, [data, setProgress])
 
   return (
-    <Animated.ScrollView contentContainerStyle={{ gap: 12 }}>
+    <Animated.ScrollView contentContainerStyle={{ gap: 12 }} bounces={false}>
       <Animated.FlatList
         ref={setListRef(route)}
         itemLayoutAnimation={LinearTransition}
