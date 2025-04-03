@@ -4,7 +4,7 @@ import { FontFamily } from '@/constants/FontFamily'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { differenceInDays, startOfISOWeek, subWeeks } from 'date-fns'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 const DAYS_OF_WEEK = [
@@ -59,8 +59,9 @@ const getGridData = (habit: Habit) => {
 }
 
 const OverallHabitItem: React.FC<OverallHabitItemProps> = ({ habit }) => {
-  const monthlyData = useMemo(() => getGridData(habit), [habit])
+  const monthlyData = getGridData(habit)
   const theme = useColorScheme()
+
   return (
     <HabitOverviewCard habit={habit}>
       <View style={styles.colContainer}>

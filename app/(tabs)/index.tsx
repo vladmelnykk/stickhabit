@@ -3,6 +3,7 @@ import ProgressBar from '@/components/common/ProgressBar'
 import OverallRoute from '@/components/HomeComponents/OverallRoute/OverallRoute'
 import TodayRoute from '@/components/HomeComponents/TodayRoute/TodayRoute'
 import WeeklyRoute from '@/components/HomeComponents/WeeklyRoute/WeeklyRoute'
+import Logo from '@/components/ui/Logo'
 import RoundPlusButton from '@/components/ui/RoundPlusButton'
 import TabView from '@/components/ui/TabView'
 import { Colors } from '@/constants/Colors'
@@ -10,12 +11,12 @@ import { FontFamily } from '@/constants/FontFamily'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
 import { habits } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { useHabitStore } from '@/store/habitStore'
+import { useStore } from '@/store/store'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite'
 import { router } from 'expo-router'
 import React, { useCallback, useEffect } from 'react'
-import { FlatList, Image, ScrollView, StatusBar, StyleSheet, View } from 'react-native'
+import { FlatList, ScrollView, StatusBar, StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Route, SceneRendererProps } from 'react-native-tab-view'
@@ -40,7 +41,7 @@ export default function Home() {
 
   const routesRef = React.useRef<{ [key: string]: FlatList | ScrollView | null }>({})
 
-  const setHabits = useHabitStore(state => state.setHabits)
+  const setHabits = useStore(state => state.setHabits)
 
   const { data } = useLiveQuery(db.select().from(habits), [new Date().getDay()])
 
@@ -94,16 +95,7 @@ export default function Home() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar backgroundColor={Colors[theme].background} />
       <Animated.View style={styles.verticalOffset} entering={FadeInUp}>
-        <Header
-          title="Home"
-          leftIcon="menu"
-          renderLeftIcon={() => (
-            <Image
-              style={{ width: 38, height: 38 }}
-              source={require('../../assets/images/favicon.png')}
-            />
-          )}
-        />
+        <Header title="Home" renderLeftItem={() => <Logo />} />
       </Animated.View>
       <Animated.View style={styles.verticalOffset} entering={FadeInDown}>
         <ProgressBar progress={progress} />

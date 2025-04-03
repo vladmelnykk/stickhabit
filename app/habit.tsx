@@ -76,7 +76,6 @@ const Page = () => {
 
   const [isReminderEnabled, setIsReminderEnabled] = useState(false)
 
-  // TODO: determine how to handle reminders ( formats for ui, notifications, database etc. )
   const [reminders, setReminders] = useState<Date[]>([])
   const [showIosDatePicker, setShowIosDatePicker] = useState(false)
 
@@ -210,7 +209,6 @@ const Page = () => {
       .map((isSelected, index) => (isSelected ? index : null))
       .filter(day => day !== null)
 
-    // TODO: determine how to set time (getTime() or only HH:MM etc. )
     const notificationTime = reminders.map(reminder => reminder.getTime())
     const habitData = {
       title: habitName,
@@ -232,7 +230,7 @@ const Page = () => {
       if (isReminderEnabled) {
         reminders.forEach(async reminder => {
           await scheduleHabitNotification(
-            `Time for ${habitName}`,
+            `Time for «${habitName}»`,
             'Stay consistent with your habit!',
             reminder,
             daysOfWeek
@@ -242,9 +240,11 @@ const Page = () => {
 
       router.back()
     } catch (error) {
-      console.error('Error saving habit:', error)
-
-      Toast.show({ type: 'error', text1: 'Something went wrong', text2: 'Failed to save habit' })
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong',
+        text2: `Failed to save habit: ${error}`
+      })
     }
   }
 

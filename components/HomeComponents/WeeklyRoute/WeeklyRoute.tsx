@@ -1,4 +1,4 @@
-import { useHabitStore } from '@/store/habitStore'
+import { useStore } from '@/store/store'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { endOfISOWeek, startOfISOWeek } from 'date-fns'
 import React, { useMemo } from 'react'
@@ -10,7 +10,7 @@ interface WeeklyRouteProps {
   setListRef: (key: string) => (ref: FlatList | null) => void
 }
 const WeeklyRoute: React.FC<WeeklyRouteProps> = ({ setListRef, route }) => {
-  const habits = useHabitStore(state => state.habits)
+  const habits = useStore(state => state.habits)
   const tabBarHeight = useBottomTabBarHeight()
   const weeklyHabits: WeeklyHabit[] = useMemo(() => {
     if (!habits) return []
@@ -37,7 +37,7 @@ const WeeklyRoute: React.FC<WeeklyRouteProps> = ({ setListRef, route }) => {
 
     return weeklyHabits
   }, [habits])
-  console.log('rendered weekly route')
+
   return (
     <FlatList
       ref={setListRef(route)}

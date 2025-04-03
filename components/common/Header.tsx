@@ -14,7 +14,7 @@ interface HeaderProps {
   onRightPress?: () => void
   leftIconStyle?: StyleProp<TextStyle>
   rightIconStyle?: StyleProp<TextStyle>
-  renderLeftIcon?: () => React.ReactNode
+  renderLeftItem?: () => React.ReactNode
 }
 
 const ICON_CONTAINER_SIZE = 40
@@ -29,15 +29,15 @@ const Header: React.FC<HeaderProps> = ({
   onRightPress,
   leftIconStyle,
   rightIconStyle,
-  renderLeftIcon
+  renderLeftItem
 }) => {
   const theme = useColorScheme()
 
   return (
     <ThemedView style={styles.container}>
       {/* Left icon */}
-      {renderLeftIcon ? (
-        renderLeftIcon()
+      {renderLeftItem ? (
+        renderLeftItem()
       ) : (
         <TouchableOpacity style={styles.leftIconContainer} onPress={onLeftPress}>
           {leftIcon && (

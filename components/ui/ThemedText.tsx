@@ -8,6 +8,7 @@ export type ThemedTextProps = TextProps & {
   type?: keyof typeof styles
 }
 
+// TODO: pass theme as prop to optimize
 export function ThemedText({
   style,
   lightColor,

@@ -1,4 +1,4 @@
-import { useHabitStore } from '@/store/habitStore'
+import { useStore } from '@/store/store'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { FlatList, StyleSheet } from 'react-native'
@@ -10,7 +10,7 @@ interface OverallRouteProps {
 }
 
 const OverallRoute: React.FC<OverallRouteProps> = ({ setListRef, route }) => {
-  const habits = useHabitStore(state => state.habits)
+  const habits = useStore(state => state.habits)
   const tabBarHeight = useBottomTabBarHeight()
 
   return (

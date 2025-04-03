@@ -16,3 +16,5 @@ interface TodayHabit extends Habit {
 interface WeeklyHabit extends Habit {
   completedDaysThisWeek: number[]
 }
+
+type Theme = 'light' | 'dark' | 'system'

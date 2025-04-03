@@ -1,5 +1,5 @@
 import { ThemedText } from '@/components/ui/ThemedText'
-import { useHabitStore } from '@/store/habitStore'
+import { useStore } from '@/store/store'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { isToday } from 'date-fns'
 import React, { useCallback } from 'react'
@@ -14,7 +14,7 @@ interface TodayRouteProps {
 }
 
 const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef }) => {
-  const data = useHabitStore(state => state.habits)
+  const data = useStore(state => state.habits)
   const tabBarHeight = useBottomTabBarHeight()
   console.log('rederred today route')
   const [todayUncompletedHabits, setTodayUncompletedHabits] = React.useState<TodayHabit[]>([])

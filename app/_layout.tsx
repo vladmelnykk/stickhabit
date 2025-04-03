@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { useStore } from '@/store/store'
 import {
   DefaultTheme,
   DarkTheme as NavigationDarkTheme,
@@ -64,7 +65,7 @@ SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations)
   const theme = useColorScheme()
-
+  const setTheme = useStore(state => state.setTheme)
   const toastConfig = useMemo(
     () => ({
       success: (props: any) => (
@@ -121,6 +122,7 @@ export default function RootLayout() {
     }
     getScheduledNotifications()
   }, [])
+
   if (!success) {
     console.log('error', error)
     return null
