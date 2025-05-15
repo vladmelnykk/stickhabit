@@ -4,9 +4,8 @@ import Icon from '@/components/ui/Icon'
 import { Colors } from '@/constants/Colors'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
 import { COLOR_WHEEL, HabitColors } from '@/constants/HabitColors'
-import BottomSheet from '@gorhom/bottom-sheet'
 import React from 'react'
-import { Pressable, StyleSheet } from 'react-native'
+import { GestureResponderEvent, Pressable, StyleSheet } from 'react-native'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 const LIST_ITEM_HEIGHT = (WINDOW_WIDTH - CONTAINER_PADDING * 2) / 7
@@ -14,14 +13,14 @@ const ICON_COLOR = '#212121'
 const ListColorItem = ({
   index,
   item,
-  setColor,
+  onColorPress,
   color,
-  bottomSheetRef
+  onColorWheelPress
 }: {
   index: number
   item: string
-  setColor: React.Dispatch<React.SetStateAction<string | null>>
-  bottomSheetRef: React.RefObject<BottomSheet>
+  onColorPress: (color: string) => void
+  onColorWheelPress: (event: GestureResponderEvent) => void
   color: string | null
 }) => {
   if (item === COLOR_WHEEL) {
@@ -29,9 +28,7 @@ const ListColorItem = ({
 
     return (
       <Pressable
-        onPress={() => {
-          bottomSheetRef.current?.expand()
-        }}
+        onPress={onColorWheelPress}
         style={({ pressed }) => ({
           width: LIST_ITEM_HEIGHT,
           height: LIST_ITEM_HEIGHT,
@@ -53,7 +50,7 @@ const ListColorItem = ({
   return (
     <Pressable
       onPress={() => {
-        setColor(prev => (prev === item ? null : item))
+        onColorPress(item)
       }}
       style={({ pressed }) => ({
         opacity: pressed ? 0.5 : 1

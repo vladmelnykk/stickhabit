@@ -1,9 +1,9 @@
 import { db } from '@/app/_layout'
-import HabitCard from '@/components/common/HabitCard'
+import ProgressHabitCard from '@/components/home/TodayRoute/ProgressHabitCard'
 import Icon from '@/components/ui/Icon'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
-import { habits } from '@/db/schema/habits'
+import { habitSchema } from '@/db/schema/habits'
 import { eq } from 'drizzle-orm'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -77,11 +77,11 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
       }
 
       await db
-        .update(habits)
+        .update(habitSchema)
         .set({
           completedDates: habit.completedDates
         })
-        .where(eq(habits.id, habit.id))
+        .where(eq(habitSchema.id, habit.id))
     } else if (
       habit.completedDates.some(el => el.date === habit.currentDate.date && el.times > 0)
     ) {
@@ -93,18 +93,18 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
       }
 
       await db
-        .update(habits)
+        .update(habitSchema)
         .set({
           completedDates: habit.completedDates
         })
-        .where(eq(habits.id, habit.id))
+        .where(eq(habitSchema.id, habit.id))
     }
     swipeableRef.current?.close()
   }
 
   return (
     <View style={styles.renderItemContainer}>
-      <HabitCard
+      <ProgressHabitCard
         color={habit.color}
         title={habit.title}
         progress={habit.currentDate.times}

@@ -21,19 +21,21 @@ const WeeklyRoute: React.FC<WeeklyRouteProps> = ({ setListRef, route }) => {
 
     const endOfWeek = endOfISOWeek(today)
 
-    const weeklyHabits = habits.map(habit => {
-      const completedDaysThisWeek = habit.completedDates
-        .filter(({ date, times }) => {
-          const dateObj = new Date(date)
-          return dateObj >= startOfWeek && dateObj <= endOfWeek && habit.timesPerDay === times
-        })
-        .map(({ date }) => new Date(date).getDay())
+    const weeklyHabits = habits
+      .filter(habit => habit.isArchived === false)
+      .map(habit => {
+        const completedDaysThisWeek = habit.completedDates
+          .filter(({ date, times }) => {
+            const dateObj = new Date(date)
+            return dateObj >= startOfWeek && dateObj <= endOfWeek && habit.timesPerDay === times
+          })
+          .map(({ date }) => new Date(date).getDay())
 
-      return {
-        ...habit,
-        completedDaysThisWeek: completedDaysThisWeek
-      }
-    })
+        return {
+          ...habit,
+          completedDaysThisWeek: completedDaysThisWeek
+        }
+      })
 
     return weeklyHabits
   }, [habits])

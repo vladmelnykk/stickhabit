@@ -14,7 +14,7 @@ interface RoundPlusButtonProps extends PressableProps {
 }
 
 const DEFAULT_TARGET_SCALE = 0.9
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+export const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const ScalePressable: React.FC<RoundPlusButtonProps> = ({
   onPressIn,

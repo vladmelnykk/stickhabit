@@ -8,7 +8,6 @@ export type ThemedTextProps = TextProps & {
   type?: keyof typeof styles
 }
 
-// TODO: pass theme as prop to optimize
 export function ThemedText({
   style,
   lightColor,
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.RobotoSemiBold,
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '400'
+    fontWeight: '600'
   },
   title: {
     fontSize: 28,

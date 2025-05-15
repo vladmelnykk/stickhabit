@@ -13,6 +13,8 @@ const OverallRoute: React.FC<OverallRouteProps> = ({ setListRef, route }) => {
   const habits = useStore(state => state.habits)
   const tabBarHeight = useBottomTabBarHeight()
 
+  const filteredHabits = habits.filter(habit => habit.isArchived === false)
+
   return (
     <FlatList
       ref={setListRef(route)}
@@ -20,7 +22,7 @@ const OverallRoute: React.FC<OverallRouteProps> = ({ setListRef, route }) => {
       overScrollMode="never"
       bounces={false}
       contentContainerStyle={[styles.flatListContent, { paddingBottom: tabBarHeight * 2 }]}
-      data={habits}
+      data={filteredHabits}
       renderItem={({ item }) => <OverallHabitItem habit={item} />}
       showsVerticalScrollIndicator={false}
     />

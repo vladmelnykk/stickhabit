@@ -1,0 +1,115 @@
+import { Colors } from '@/constants/Colors'
+import { FontFamily } from '@/constants/FontFamily'
+import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
+import { useColorScheme } from '@/hooks/useColorScheme'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { BarChart as BarChartRNGC, barDataItem } from 'react-native-gifted-charts'
+
+const LABEL_WIDTH = 20
+const SPACING = 8
+const CHART_WIDTH = WINDOW_WIDTH - CONTAINER_PADDING * 2 - LABEL_WIDTH - SPACING - 12
+
+const BAR_WIDTH = (CHART_WIDTH - SPACING * 7 - 15) / 7
+export const TOOLTIP_WIDTH = BAR_WIDTH + SPACING
+interface BarChartProps {
+  data: barDataItem[]
+  maxValue: number
+  onPress: (item: any, index: number) => void
+}
+
+const BarChart: React.FC<BarChartProps> = ({ data, maxValue, onPress }) => {
+  const theme = useColorScheme()
+
+  return (
+    <BarChartRNGC
+      data={data}
+      scrollToIndex={-1}
+      // overflowTop={5}
+      yAxisExtraHeight={TOOLTIP_WIDTH * 1.2}
+      yAxisThickness={0}
+      xAxisThickness={0}
+      hideRules
+      yAxisLabelWidth={LABEL_WIDTH}
+      parentWidth={CHART_WIDTH}
+      initialSpacing={SPACING}
+      spacing={SPACING}
+      barWidth={BAR_WIDTH}
+      activeOpacity={1}
+      noOfSections={maxValue < 7 ? Math.min(10, maxValue + 2) : 5}
+      maxValue={maxValue <= 10 ? maxValue + 2 : undefined}
+      frontColor={Colors[theme].tint}
+      highlightEnabled
+      focusBarOnPress
+      endSpacing={0}
+      onPress={onPress}
+      focusedBarConfig={{ color: Colors[theme].tint }}
+      roundedTop
+      formatYLabel={(value: string) => String(Number(value))}
+      yAxisTextStyle={{ color: Colors[theme].text }}
+      xAxisLabelTextStyle={{ color: Colors[theme].text }}
+      renderTooltip={(item: barDataItem, index: number) => {
+        return (
+          <View
+            style={{
+              marginBottom: 5,
+              backgroundColor: Colors[theme].background,
+              padding: 6,
+              borderRadius: 48,
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: TOOLTIP_WIDTH,
+              height: TOOLTIP_WIDTH,
+              borderWidth: 4,
+              borderColor: Colors[theme].tint,
+              left: '-50%',
+              transform: [{ translateX: BAR_WIDTH / 2 }],
+              zIndex: 100
+            }}
+          >
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={{
+                color: Colors[theme].text,
+                fontFamily: FontFamily.RobotoRegular,
+                textAlign: 'center'
+              }}
+            >
+              {item.value}
+            </Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={{
+                color: Colors[theme].text,
+                fontFamily: FontFamily.RobotoRegular,
+                textAlign: 'center'
+              }}
+            >
+              habits
+            </Text>
+            <View
+              style={{
+                zIndex: 100,
+                position: 'absolute',
+                bottom: -10,
+                borderLeftWidth: 6,
+                borderRightWidth: 6,
+                borderTopWidth: 8,
+                borderStyle: 'solid',
+                borderLeftColor: 'transparent',
+                borderRightColor: 'transparent',
+                borderTopColor: Colors[theme].tint
+              }}
+            />
+          </View>
+        )
+      }}
+    />
+  )
+}
+
+export default BarChart
+
+const styles = StyleSheet.create({})

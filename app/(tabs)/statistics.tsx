@@ -1,34 +1,65 @@
 import Header from '@/components/common/Header'
-import Logo from '@/components/ui/Logo'
-import { ThemedText } from '@/components/ui/ThemedText'
+import ChartWithRangePicker from '@/components/statistics/ChartWithRangePicker'
+import StatisticsPanel from '@/components/statistics/StatisticsPanel'
+import { ChartRange } from '@/constants/ChartRange'
 import { CONTAINER_PADDING } from '@/constants/global'
-import { useColorScheme } from '@/hooks/useColorScheme'
 import { useStore } from '@/store/store'
+import {
+  calculateCompletedHabitsForChart,
+  calculateCompletionRateForChart,
+  calculateStatistics
+} from '@/utils/statistics'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import React from 'react'
-import { ScrollView, StyleSheet } from 'react-native'
+import React, { useMemo } from 'react'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const Page = () => {
   const insets = useSafeAreaInsets()
   const tabBarHeight = useBottomTabBarHeight()
+
   const habits = useStore(state => state.habits)
-  const theme = useColorScheme()
+
+  const statistics = useMemo(() => calculateStatistics(habits), [habits])
 
   return (
-    <ScrollView
-      style={[styles.scrollView, { paddingTop: insets.top }]}
-      contentContainerStyle={[styles.container, { paddingBottom: tabBarHeight }]}
-    >
-      <Header title="Statistics" renderLeftItem={() => <Logo />} />
-      <ThemedText>Page</ThemedText>
-    </ScrollView>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <Header title="Statistics" showLogo />
+
+      <ScrollView
+        style={[styles.scrollView]}
+        contentContainerStyle={[styles.scrollContainer, { paddingBottom: tabBarHeight + 20 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        <StatisticsPanel {...statistics} />
+        <ChartWithRangePicker
+          title="Habits Completed"
+          range={ChartRange}
+          buildChartData={calculateCompletedHabitsForChart}
+        />
+        <ChartWithRangePicker
+          title="Habits Completion Rate"
+          range={ChartRange}
+          chartType="line"
+          buildChartData={calculateCompletionRateForChart}
+        />
+      </ScrollView>
+    </View>
   )
 }
 
 export default Page
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    gap: 8,
+    paddingHorizontal: CONTAINER_PADDING,
+    position: 'relative'
+  },
   scrollView: { flex: 1 },
-  container: { flex: 1, paddingHorizontal: CONTAINER_PADDING }
+  scrollContainer: {
+    gap: 18,
+    paddingTop: 20
+  }
 })

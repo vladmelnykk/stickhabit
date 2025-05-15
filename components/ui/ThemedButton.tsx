@@ -10,6 +10,7 @@ const HEIGHT = 50
 interface ThemedButtonProps {
   style?: StyleProp<ViewStyle>
   primary?: boolean
+  disabled?: boolean
   title: string
   targetScale?: number
   onPress: (event: GestureResponderEvent) => void
@@ -22,7 +23,8 @@ const ThemedButton: React.FC<ThemedButtonProps> = ({
   primary = true,
   onPress,
   title,
-  targetScale = SCALE
+  targetScale = SCALE,
+  disabled = false
 }) => {
   const theme = useColorScheme()
 
@@ -38,9 +40,9 @@ const ThemedButton: React.FC<ThemedButtonProps> = ({
 
   return (
     <ScalePressable
-      onPress={onPress}
-      targetScale={targetScale}
-      style={[styles.container, { backgroundColor }, style]}
+      onPress={disabled ? undefined : onPress}
+      targetScale={disabled ? 1 : targetScale}
+      style={[styles.container, { backgroundColor, opacity: disabled ? 0.5 : 1 }, style]}
     >
       <Text style={[styles.text, { color }]}>{title}</Text>
     </ScalePressable>
@@ -51,6 +53,7 @@ export default ThemedButton
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     height: HEIGHT,
     borderRadius: HEIGHT / 2,
     justifyContent: 'center',

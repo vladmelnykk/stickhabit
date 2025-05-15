@@ -1,6 +1,5 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { useStore } from '@/store/store'
 import {
   DefaultTheme,
   DarkTheme as NavigationDarkTheme,
@@ -11,6 +10,7 @@ import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
 import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack } from 'expo-router'
 import * as SQLite from 'expo-sqlite'
+import * as SystemUI from 'expo-system-ui'
 import React, { useEffect, useMemo } from 'react'
 import { StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -58,14 +58,18 @@ Notifications.setNotificationHandler({
   })
 })
 
+// Notifications.cancelAllScheduledNotificationsAsync()
+
 const expo = SQLite.openDatabaseSync('db.db', { enableChangeListener: true })
 export const db = drizzle(expo)
 
+// ;(async () => {
+//   await db.delete(habitSchema)
+// })()
 SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations)
   const theme = useColorScheme()
-  const setTheme = useStore(state => state.setTheme)
   const toastConfig = useMemo(
     () => ({
       success: (props: any) => (
@@ -110,7 +114,7 @@ export default function RootLayout() {
     if (success) {
       SplashScreen.hideAsync()
       // ;(async () => {
-      //   await db.delete(habits)
+      //   await db.delete(habitSchema)
       // })()
     }
   }, [success])
@@ -123,21 +127,27 @@ export default function RootLayout() {
     getScheduledNotifications()
   }, [])
 
+  SystemUI.setBackgroundColorAsync(Colors[theme].background)
+
   if (!success) {
     console.log('error', error)
     return null
   }
 
   return (
-    <ThemeProvider value={theme === 'dark' ? DarkTheme : LightTheme}>
-      <GestureHandlerRootView style={styles.container}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="habit" options={{ headerShown: false }} />
-        </Stack>
-        <Toast config={toastConfig} visibilityTime={1500} />
-      </GestureHandlerRootView>
-    </ThemeProvider>
+    <GestureHandlerRootView style={styles.container}>
+      <ThemeProvider value={theme === 'dark' ? DarkTheme : LightTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: false
+          }}
+        />
+        {/*         
+        // TODO: fix Toast
+        @ts-ignore */}
+        <Toast config={toastConfig} visibilityTime={1500} swipeable={false} />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   )
 }
 

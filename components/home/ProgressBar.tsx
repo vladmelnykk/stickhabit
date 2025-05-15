@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
-import { View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -45,26 +45,13 @@ const ProgressBar = ({ date = new Date(), progress }: Props) => {
         <ThemedText>{`Progress: ${progress.toFixed(0)}%`}</ThemedText>
       </View>
       <View
-        style={{
-          backgroundColor: Colors[theme].secondary,
-          height: 20,
-          borderRadius: 20,
-          borderWidth: 0.5,
-          borderColor: Colors[theme].icon,
-          overflow: 'hidden'
-        }}
+        style={[
+          styles.container,
+          { backgroundColor: Colors[theme].secondary, borderColor: Colors[theme].icon }
+        ]}
       >
         <Animated.View
-          // layout={LinearTransition.duration(500)}
-          style={[
-            {
-              flex: 1,
-              flexDirection: 'row',
-              backgroundColor: Colors[theme].tint
-              // width: 0
-            },
-            animatedStyle
-          ]}
+          style={[styles.flex, { backgroundColor: Colors[theme].tint }, animatedStyle]}
         />
       </View>
     </View>
@@ -72,3 +59,8 @@ const ProgressBar = ({ date = new Date(), progress }: Props) => {
 }
 
 export default ProgressBar
+
+const styles = StyleSheet.create({
+  container: { height: 20, borderRadius: 20, borderWidth: 0.5, overflow: 'hidden' },
+  flex: { flex: 1 }
+})

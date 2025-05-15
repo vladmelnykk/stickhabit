@@ -3,6 +3,7 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
 import { StyleProp, StyleSheet, TextStyle, TouchableOpacity } from 'react-native'
 import Icon from '../ui/Icon'
+import Logo from '../ui/Logo'
 import { ThemedText } from '../ui/ThemedText'
 import { ThemedView } from '../ui/ThemedView'
 
@@ -15,6 +16,8 @@ interface HeaderProps {
   leftIconStyle?: StyleProp<TextStyle>
   rightIconStyle?: StyleProp<TextStyle>
   renderLeftItem?: () => React.ReactNode
+  renderRightItem?: () => React.ReactNode
+  showLogo?: boolean
 }
 
 const ICON_CONTAINER_SIZE = 40
@@ -29,14 +32,18 @@ const Header: React.FC<HeaderProps> = ({
   onRightPress,
   leftIconStyle,
   rightIconStyle,
-  renderLeftItem
+  renderLeftItem,
+  renderRightItem,
+  showLogo = false
 }) => {
   const theme = useColorScheme()
 
   return (
     <ThemedView style={styles.container}>
       {/* Left icon */}
-      {renderLeftItem ? (
+      {showLogo ? (
+        <Logo />
+      ) : renderLeftItem ? (
         renderLeftItem()
       ) : (
         <TouchableOpacity style={styles.leftIconContainer} onPress={onLeftPress}>
@@ -57,20 +64,24 @@ const Header: React.FC<HeaderProps> = ({
       </ThemedText>
 
       {/* Right icon */}
-      <TouchableOpacity
-        style={styles.rightIconContainer}
-        onPress={onRightPress}
-        disabled={!rightIcon}
-      >
-        {rightIcon && (
-          <Icon
-            name={rightIcon}
-            color={Colors[theme].text}
-            size={ICON_SIZE}
-            style={rightIconStyle}
-          />
-        )}
-      </TouchableOpacity>
+      {renderRightItem ? (
+        renderRightItem()
+      ) : (
+        <TouchableOpacity
+          style={styles.rightIconContainer}
+          onPress={onRightPress}
+          disabled={!rightIcon}
+        >
+          {rightIcon && (
+            <Icon
+              name={rightIcon}
+              color={Colors[theme].text}
+              size={ICON_SIZE}
+              style={rightIconStyle}
+            />
+          )}
+        </TouchableOpacity>
+      )}
     </ThemedView>
   )
 }

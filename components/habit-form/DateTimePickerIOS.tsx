@@ -3,19 +3,13 @@ import React, { useState } from 'react'
 import { Button, StyleSheet, View } from 'react-native'
 
 interface DateTimePickerIOSProps {
-  // date: Date | null
-  // onChange: React.ComponentProps<typeof DateTimePicker>['onChange']
   toggleDatePicker: () => void
   confirmDate: (date: Date | null) => void
 }
 
 const HEIGHT = 80
 
-const DateTimePickerIOS: React.FC<DateTimePickerIOSProps> = ({
-  // onChange,
-  toggleDatePicker,
-  confirmDate
-}) => {
+const DateTimePickerIOS: React.FC<DateTimePickerIOSProps> = ({ toggleDatePicker, confirmDate }) => {
   const [date, setDate] = useState<Date | null>(new Date())
 
   const handleDateChangeIOS: React.ComponentProps<typeof DateTimePicker>['onChange'] = (

@@ -1,12 +1,7 @@
 import * as React from 'react'
 import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg'
 const ColorWheelSvg = props => (
-  <Svg
-    viewBox="0 0 280 280"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+  <Svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <Path
       d="M280 140c0 77.32-62.68 140-140 140S0 217.32 0 140 62.68 0 140 0s140 62.68 140 140"
       fill="#fff"
@@ -43,4 +38,4 @@ const ColorWheelSvg = props => (
     </Defs>
   </Svg>
 )
-export default ColorWheelSvg
+export default React.memo(ColorWheelSvg)
