@@ -1,15 +1,14 @@
 import Header from '@/components/common/Header'
-import ProgressBar from '@/components/common/ProgressBar'
-import OverallRoute from '@/components/HomeComponents/OverallRoute/OverallRoute'
-import TodayRoute from '@/components/HomeComponents/TodayRoute/TodayRoute'
-import WeeklyRoute from '@/components/HomeComponents/WeeklyRoute/WeeklyRoute'
-import Logo from '@/components/ui/Logo'
+import OverallRoute from '@/components/home/OverallRoute/OverallRoute'
+import ProgressBar from '@/components/home/ProgressBar'
+import TodayRoute from '@/components/home/TodayRoute/TodayRoute'
+import WeeklyRoute from '@/components/home/WeeklyRoute/WeeklyRoute'
 import RoundPlusButton from '@/components/ui/RoundPlusButton'
 import TabView from '@/components/ui/TabView'
 import { Colors } from '@/constants/Colors'
 import { FontFamily } from '@/constants/FontFamily'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
-import { habits } from '@/db/schema/habits'
+import { habitSchema } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useStore } from '@/store/store'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
@@ -21,12 +20,6 @@ import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Route, SceneRendererProps } from 'react-native-tab-view'
 import { db } from '../_layout'
-
-// const renderScene = SceneMap({
-//   today: TodayRoute,
-//   weekly: SecondRoute,
-//   overall: SecondRoute
-// })
 
 const routes = [
   { key: 'today', title: 'Today' },
@@ -43,13 +36,15 @@ export default function Home() {
 
   const setHabits = useStore(state => state.setHabits)
 
-  const { data } = useLiveQuery(db.select().from(habits), [new Date().getDay()])
+  const { data } = useLiveQuery(db.select().from(habitSchema).orderBy(habitSchema.position), [
+    new Date().getDay()
+  ])
 
   const [tabBarIndex, setTabBarIndex] = React.useState(0)
   const [progress, setProgress] = React.useState<number>(0)
-  console.log('rendered index route')
+
   const handleCreateHabitPress = () => {
-    router.push('/habit')
+    router.push('/habit/add')
   }
   const handleTabPress = (routeKey: string) => {
     const ref = routesRef.current[routeKey]
@@ -72,8 +67,6 @@ export default function Home() {
 
   useEffect(() => {
     if (data) {
-      console.log('new data')
-
       setHabits(data)
     }
   }, [data, setHabits])
@@ -95,7 +88,7 @@ export default function Home() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar backgroundColor={Colors[theme].background} />
       <Animated.View style={styles.verticalOffset} entering={FadeInUp}>
-        <Header title="Home" renderLeftItem={() => <Logo />} />
+        <Header title="Home" showLogo />
       </Animated.View>
       <Animated.View style={styles.verticalOffset} entering={FadeInDown}>
         <ProgressBar progress={progress} />

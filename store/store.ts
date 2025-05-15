@@ -6,7 +6,7 @@ interface Store {
   setTheme: (theme: Theme) => void
 
   /* <-- Habits --> */
-  habits: Habit[] | null
+  habits: Habit[]
   setHabits: (habits: Habit[]) => void
 }
 
@@ -16,6 +16,6 @@ export const useStore = create<Store>(set => ({
   setTheme: theme => set({ theme }),
 
   /* <-- Habits --> */
-  habits: null,
+  habits: [],
   setHabits: habits => set({ habits })
 }))

@@ -7,6 +7,10 @@ interface Habit {
   completedDates: { date: number; times: number }[]
   createdAt: number
   notificationTime: number[]
+  notificationIds: string[]
+  position: number
+  isArchived: boolean
+  archivedAt: number | null
 }
 
 interface TodayHabit extends Habit {
