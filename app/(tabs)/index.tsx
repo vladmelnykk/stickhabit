@@ -5,21 +5,21 @@ import TodayRoute from '@/components/home/TodayRoute/TodayRoute'
 import WeeklyRoute from '@/components/home/WeeklyRoute/WeeklyRoute'
 import RoundPlusButton from '@/components/ui/RoundPlusButton'
 import TabView from '@/components/ui/TabView'
-import { Colors } from '@/constants/Colors'
 import { FontFamily } from '@/constants/FontFamily'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
 import { habitSchema } from '@/db/schema/habits'
-import { useColorScheme } from '@/hooks/useColorScheme'
+import migrations from '@/drizzle/migrations'
+import { useDatabase } from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite'
-import { router } from 'expo-router'
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
+import { router, SplashScreen } from 'expo-router'
 import React, { useCallback, useEffect } from 'react'
-import { FlatList, ScrollView, StatusBar, StyleSheet, View } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Route, SceneRendererProps } from 'react-native-tab-view'
-import { db } from '../_layout'
 
 const routes = [
   { key: 'today', title: 'Today' },
@@ -30,11 +30,19 @@ const routes = [
 export default function Home() {
   const tabBarHeight = useBottomTabBarHeight()
   const insets = useSafeAreaInsets()
-  const theme = useColorScheme()
 
   const routesRef = React.useRef<{ [key: string]: FlatList | ScrollView | null }>({})
 
   const setHabits = useStore(state => state.setHabits)
+  const { db } = useDatabase()
+
+  const { success, error } = useMigrations(db, migrations)
+
+  useEffect(() => {
+    if (success && !error) {
+      SplashScreen.hideAsync()
+    }
+  }, [success, error])
 
   const { data } = useLiveQuery(db.select().from(habitSchema).orderBy(habitSchema.position), [
     new Date().getDay()
@@ -86,7 +94,6 @@ export default function Home() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar backgroundColor={Colors[theme].background} />
       <Animated.View style={styles.verticalOffset} entering={FadeInUp}>
         <Header title="Home" showLogo />
       </Animated.View>

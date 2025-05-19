@@ -8,6 +8,7 @@ import { barDataItem, lineDataItem } from 'react-native-gifted-charts'
 import Dropdown from '../common/Dropdown'
 import { ThemedText } from '../ui/ThemedText'
 
+import { Habit } from '@/types/types'
 import BarChart from './BarChart'
 import LineChart from './LineChart'
 export interface Range {

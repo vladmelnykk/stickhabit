@@ -1,22 +1,18 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import SQLiteProvider from '@/providers/DatabaseProvider'
 import {
   DefaultTheme,
   DarkTheme as NavigationDarkTheme,
   ThemeProvider
 } from '@react-navigation/native'
-import { drizzle } from 'drizzle-orm/expo-sqlite'
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
 import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack } from 'expo-router'
-import * as SQLite from 'expo-sqlite'
 import * as SystemUI from 'expo-system-ui'
-import React, { useEffect, useMemo } from 'react'
-import { StyleSheet } from 'react-native'
+import React, { useMemo } from 'react'
+import { StatusBar, StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
-import migrations from '../drizzle/migrations'
-
 const DarkTheme: typeof NavigationDarkTheme = {
   ...NavigationDarkTheme,
   colors: {
@@ -39,17 +35,7 @@ const LightTheme = {
   }
 }
 
-async function registerForPushNotificationsAsync() {
-  const { status } = await Notifications.getPermissionsAsync()
-  if (status !== 'granted') {
-    const { status: newStatus } = await Notifications.requestPermissionsAsync()
-    if (newStatus !== 'granted') {
-      console.log('Permission for notifications was denied')
-      return
-    }
-  }
-}
-
+// TODO: Is it possible to remove this?
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -60,15 +46,8 @@ Notifications.setNotificationHandler({
 
 // Notifications.cancelAllScheduledNotificationsAsync()
 
-const expo = SQLite.openDatabaseSync('db.db', { enableChangeListener: true })
-export const db = drizzle(expo)
-
-// ;(async () => {
-//   await db.delete(habitSchema)
-// })()
 SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
-  const { success, error } = useMigrations(db, migrations)
   const theme = useColorScheme()
   const toastConfig = useMemo(
     () => ({
@@ -106,42 +85,22 @@ export default function RootLayout() {
     [theme]
   )
 
-  useEffect(() => {
-    registerForPushNotificationsAsync()
-  }, [])
-
-  useEffect(() => {
-    if (success) {
-      SplashScreen.hideAsync()
-      // ;(async () => {
-      //   await db.delete(habitSchema)
-      // })()
-    }
-  }, [success])
-
-  useEffect(() => {
-    async function getScheduledNotifications() {
-      const scheduled = await Notifications.getAllScheduledNotificationsAsync()
-      console.log(scheduled)
-    }
-    getScheduledNotifications()
-  }, [])
-
   SystemUI.setBackgroundColorAsync(Colors[theme].background)
-
-  if (!success) {
-    console.log('error', error)
-    return null
-  }
 
   return (
     <GestureHandlerRootView style={styles.container}>
       <ThemeProvider value={theme === 'dark' ? DarkTheme : LightTheme}>
-        <Stack
-          screenOptions={{
-            headerShown: false
-          }}
+        <StatusBar
+          backgroundColor={Colors[theme].background}
+          barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
         />
+        <SQLiteProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false
+            }}
+          />
+        </SQLiteProvider>
         {/*         
         // TODO: fix Toast
         @ts-ignore */}

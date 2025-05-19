@@ -1,10 +1,10 @@
 import { Colors } from '@/constants/Colors'
-import { FontFamily } from '@/constants/FontFamily'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import Icon from '../ui/Icon'
 import { ThemedText } from '../ui/ThemedText'
+import BottomSheetHeader from './BottomSheetHeader'
 
 const KEEP_COLOR = '#FF981F'
 const CLEAR_COLOR = '#F85757'
@@ -19,8 +19,7 @@ const DeleteHabit: React.FC<DeleteHabitProps> = ({ onDeleteAndKeep, onDeleteAndC
 
   return (
     <View style={styles.container}>
-      <Text style={styles.dangerText}>Delete this Habit?</Text>
-      <View style={[styles.line, { backgroundColor: Colors[theme].accent }]} />
+      <BottomSheetHeader title="Delete this Habit?" titleStyle={styles.dangerText} />
       <Pressable
         onPress={onDeleteAndKeep}
         style={[
@@ -50,14 +49,7 @@ export default DeleteHabit
 const styles = StyleSheet.create({
   container: { alignItems: 'center', textAlign: 'center', gap: 20 },
   dangerText: {
-    fontSize: 24,
-    fontFamily: FontFamily.RobotoBold,
     color: CLEAR_COLOR
-  },
-  line: {
-    width: '100%',
-    height: StyleSheet.hairlineWidth,
-    borderRadius: 8
   },
   button: {
     width: '100%',

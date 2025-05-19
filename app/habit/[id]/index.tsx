@@ -120,8 +120,6 @@ const Page = () => {
           disableAllTouchEventsForDisabledDays
           disableAllTouchEventsForInactiveDays
           theme={calendarTheme}
-          // TODO: fix TS
-          // @ts-ignore
           renderArrow={renderArrow}
         />
       </ScrollView>

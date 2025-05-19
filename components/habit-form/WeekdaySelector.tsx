@@ -21,29 +21,11 @@ interface WeekdaySelectorProps {
 }
 
 const WeekdaySelector: React.FC<WeekdaySelectorProps> = ({ selectedDays, setSelectedDays }) => {
-  // const [itemWidth, setItemWidth] = React.useState(0)
   const ref = React.useRef<View>(null)
   const theme = useColorScheme()
 
-  // TODO: old architecture does not support this way
-  // useLayoutEffect(() => {
-  //   ref.current?.measureInWindow((x, y, width, height) => {
-  //     const itemWidth = (Math.floor(width) - GAP * (DAYS_OF_WEEK.length - 1)) / DAYS_OF_WEEK.length
-  //     setItemWidth(itemWidth)
-  //   })
-  // }, [])
-
   return (
-    <View
-      ref={ref}
-      // onLayout={(event: LayoutChangeEvent) => {
-      //   const { width } = event.nativeEvent.layout
-      //   const itemWidth =
-      //     (Math.floor(width) - GAP * (DAYS_OF_WEEK.length - 1)) / DAYS_OF_WEEK.length
-      //   setItemWidth(itemWidth)
-      // }}
-      style={styles.container}
-    >
+    <View ref={ref} style={styles.container}>
       {DAYS_OF_WEEK.map((item, index) => (
         <SquareButton
           value={selectedDays[index]}

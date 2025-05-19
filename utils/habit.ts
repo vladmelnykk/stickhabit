@@ -1,9 +1,11 @@
-import { db } from '@/app/_layout'
 import { habitSchema } from '@/db/schema/habits'
+import { Habit } from '@/types/types'
 import { eq } from 'drizzle-orm'
+import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { cancelAllHabitNotifications, refreshHabitNotifications } from './notification'
 
 async function createHabit(
+  db: ReturnType<typeof drizzle>,
   habit: Omit<Habit, 'id' | 'notificationIds' | 'isArchived' | 'archivedAt'>,
   reminders?: Date[]
 ) {
@@ -18,7 +20,7 @@ async function createHabit(
   await db.insert(habitSchema).values({ ...habit, notificationIds: newNotificationIds })
 }
 
-async function archiveHabit(habit: Habit) {
+async function archiveHabit(db: ReturnType<typeof drizzle>, habit: Habit) {
   // Cancel all notifications
   await cancelAllHabitNotifications(habit?.notificationIds || [])
 
@@ -29,7 +31,7 @@ async function archiveHabit(habit: Habit) {
     .where(eq(habitSchema.id, habit.id))
 }
 
-async function deleteHabit(habit: Habit) {
+async function deleteHabit(db: ReturnType<typeof drizzle>, habit: Habit) {
   // Cancel all notifications
   await cancelAllHabitNotifications(habit?.notificationIds || [])
 
@@ -38,6 +40,7 @@ async function deleteHabit(habit: Habit) {
 }
 
 async function updateHabit(
+  db: ReturnType<typeof drizzle>,
   habit: Habit,
   updatedHabit: Pick<Habit, 'title' | 'color' | 'notificationTime'>,
   reminders?: Date[]

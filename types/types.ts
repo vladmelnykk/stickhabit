@@ -1,4 +1,4 @@
-interface Habit {
+export interface Habit {
   id: number
   title: string
   color: string
@@ -13,12 +13,12 @@ interface Habit {
   archivedAt: number | null
 }
 
-interface TodayHabit extends Habit {
+export interface TodayHabit extends Habit {
   currentDate: { date: number; times: number }
 }
 
-interface WeeklyHabit extends Habit {
+export interface WeeklyHabit extends Habit {
   completedDaysThisWeek: number[]
 }
 
-type Theme = 'light' | 'dark' | 'system'
+export type Theme = 'light' | 'dark' | 'system'

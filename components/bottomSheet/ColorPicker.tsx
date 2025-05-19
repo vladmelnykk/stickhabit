@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import { useSharedValue } from 'react-native-reanimated'
 import ColorPickerRN, { HueSlider, Panel1, Preview } from 'reanimated-color-picker'
 import ThemedButton from '../ui/ThemedButton'
+import BottomSheetHeader from './BottomSheetHeader'
 interface Props {
   onPickColor: (pickedColor: string | null) => void
 }
@@ -12,13 +13,7 @@ const ColorPicker: React.FC<Props> = ({ onPickColor }) => {
 
   return (
     <View style={styles.container}>
-      <ThemedButton
-        title="Pick"
-        style={styles.button}
-        onPress={() => {
-          onPickColor(pickedColor.value)
-        }}
-      />
+      <BottomSheetHeader title="Pick Color" />
       <ColorPickerRN
         style={styles.colorPicker}
         onComplete={color => {
@@ -31,6 +26,14 @@ const ColorPicker: React.FC<Props> = ({ onPickColor }) => {
           <HueSlider boundedThumb vertical thumbShape="rect" thumbInnerStyle={{ height: 8 }} />
         </View>
       </ColorPickerRN>
+      <ThemedButton
+        primary
+        title="Pick"
+        style={styles.button}
+        onPress={() => {
+          onPickColor(pickedColor.value)
+        }}
+      />
     </View>
   )
 }
@@ -38,9 +41,9 @@ const ColorPicker: React.FC<Props> = ({ onPickColor }) => {
 export default React.memo(ColorPicker)
 
 const styles = StyleSheet.create({
-  container: { alignItems: 'center' },
+  container: { alignItems: 'center', gap: 20 },
   colorPicker: { width: '85%' },
   colorContainer: { flexDirection: 'row', gap: 4 },
   colorPanel: { flex: 1 },
-  button: { width: '100%', marginBottom: 20 }
+  button: { width: '100%' }
 })

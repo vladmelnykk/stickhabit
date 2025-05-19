@@ -1,3 +1,4 @@
+import { Habit } from '@/types/types'
 import {
   addDays,
   eachDayOfInterval,

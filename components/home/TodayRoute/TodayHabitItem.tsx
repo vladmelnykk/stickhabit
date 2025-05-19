@@ -1,9 +1,10 @@
-import { db } from '@/app/_layout'
 import ProgressHabitCard from '@/components/home/TodayRoute/ProgressHabitCard'
 import Icon from '@/components/ui/Icon'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
 import { habitSchema } from '@/db/schema/habits'
+import { useDatabase } from '@/providers/DatabaseProvider'
+import { TodayHabit } from '@/types/types'
 import { eq } from 'drizzle-orm'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -49,6 +50,7 @@ function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
 const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
   const swipeableRef = React.useRef<SwipeableMethods>(null)
 
+  const { db } = useDatabase()
   const handleSwipe = async (direction: string) => {
     if (direction === 'left') {
       const updatedDates = habit.completedDates.find(el => el.date === habit.currentDate.date)

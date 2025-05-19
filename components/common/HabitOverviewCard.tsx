@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { Habit } from '@/types/types'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { ThemedText } from '../ui/ThemedText'

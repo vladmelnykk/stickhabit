@@ -1,26 +1,28 @@
-import BottomSheet from '@/components/common/BottomSheet'
+import BottomSheet from '@/components/bottomSheet/BottomSheet'
+import DeleteHabit from '@/components/bottomSheet/DeleteHabit'
 import Header from '@/components/common/Header'
 import ColorList from '@/components/habit-form/ColorList'
-import ColorPicker from '@/components/habit-form/ColorPicker'
-import DeleteHabit from '@/components/habit-form/DeleteHabit'
 import ReminderControls from '@/components/habit-form/ReminderControls'
 import Icon from '@/components/ui/Icon'
 import Input from '@/components/ui/Input'
 import ThemedButton from '@/components/ui/ThemedButton'
 import { ThemedText } from '@/components/ui/ThemedText'
-import { Colors } from '@/constants/Colors'
+import { Colors, DANGER_COLOR } from '@/constants/Colors'
 import { FontFamily } from '@/constants/FontFamily'
 import { CONTAINER_PADDING } from '@/constants/global'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { useDatabase } from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
+import { confirm } from '@/utils/alert'
 import { archiveHabit, deleteHabit, updateHabit } from '@/utils/habit'
-import BottomSheetRN from '@gorhom/bottom-sheet'
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { Redirect, router, useLocalSearchParams } from 'expo-router'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { lazy, Suspense, useCallback, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
+const ColorPicker = lazy(() => import('@/components/bottomSheet/ColorPicker'))
 type BottomSheetContentType = 'color' | 'delete'
 
 type EditFormData = {
@@ -38,13 +40,14 @@ const initalData: EditFormData = {
 const Page = () => {
   const { id } = useLocalSearchParams()
   const theme = useColorScheme()
+  const { db } = useDatabase()
   const insets = useSafeAreaInsets()
   const habits = useStore(state => state.habits)
 
   const numericId = Number(id)
   const habit = useMemo(() => habits.find(h => h.id === numericId), [habits, numericId])
 
-  const bottomSheetRef = React.useRef<BottomSheetRN>(null)
+  const bottomSheetRef = React.useRef<BottomSheetMethods>(null)
   const [bottomSheetContentType, setBottomSheetContentType] =
     useState<BottomSheetContentType>('color')
   const [editFormData, setEditFormData] = useState<Partial<EditFormData>>({})
@@ -68,46 +71,67 @@ const Page = () => {
   }
 
   const handleDeleteAndKeep = async () => {
-    try {
-      await archiveHabit(habit)
-      Toast.show({
-        type: 'info',
-        text1: 'Success',
-        text2: `Successfully archived ${habit?.title}`
-      })
-      router.replace('/habits')
-    } catch {
-      Toast.show({
-        type: 'error',
-        text1: 'Something went wrong',
-        text2: `Failed to archive habit`
-      })
+    const onConfirm = async () => {
+      try {
+        await archiveHabit(db, habit)
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: `Successfully archived ${habit?.title}`
+        })
+        router.replace('/habits')
+      } catch {
+        Toast.show({
+          type: 'error',
+          text1: 'Something went wrong',
+          text2: `Failed to archive habit`
+        })
+      }
     }
+
+    confirm(
+      'Archive Habit',
+      'Are you sure you want to archive this habit? This will remove all history and keep the habit in your archive.',
+      'Archive',
+      onConfirm
+    )
   }
 
   const handleDeleteAndClear = async () => {
-    try {
-      deleteHabit(habit)
-
-      Toast.show({
-        type: 'info',
-        text1: 'Success',
-        text2: `Successfully deleted ${habit?.title}`
-      })
-      router.replace('/habits')
-    } catch {
-      Toast.show({
-        type: 'error',
-        text1: 'Something went wrong',
-        text2: `Failed to save habit`
-      })
+    const onConfirm = async () => {
+      try {
+        deleteHabit(db, habit)
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: `Successfully deleted ${habit?.title}`
+        })
+        router.replace('/habits')
+      } catch {
+        Toast.show({
+          type: 'error',
+          text1: 'Something went wrong',
+          text2: `Failed to save habit`
+        })
+      }
     }
+
+    confirm(
+      'Delete Habit',
+      'Are you sure you want to delete this habit? This will remove all history and delete the habit permanently.',
+      'Delete',
+      onConfirm
+    )
   }
 
   const renderBottomSheetContent = () => {
     switch (bottomSheetContentType) {
       case 'color':
-        return <ColorPicker onPickColor={handleColorSelect} />
+        return (
+          <Suspense fallback={null}>
+            <ColorPicker onPickColor={handleColorSelect} />
+          </Suspense>
+        )
       case 'delete':
         return (
           <DeleteHabit
@@ -159,7 +183,7 @@ const Page = () => {
             ? formData.reminders.map(reminder => reminder.getTime())
             : []
         }
-        updateHabit(habit, updatedHabit, isReminderEnabled ? formData.reminders : [])
+        updateHabit(db, habit, updatedHabit, isReminderEnabled ? formData.reminders : [])
 
         Toast.show({
           type: 'success',
@@ -198,7 +222,7 @@ const Page = () => {
                 }
               }}
             >
-              <Icon name="trash" size={24} color="#F75656" />
+              <Icon name="trash" size={24} color={DANGER_COLOR} />
             </TouchableOpacity>
           </View>
         )}
@@ -246,8 +270,13 @@ const Page = () => {
         </View>
 
         <View style={styles.rowContainer}>
-          <ThemedButton title="Save" style={{}} onPress={handleSave} />
-          <ThemedButton disabled={!isDirty} primary={false} title="Reset" onPress={() => reset()} />
+          <ThemedButton title="Save" style={styles.bottomButton} primary onPress={handleSave} />
+          <ThemedButton
+            style={styles.bottomButton}
+            disabled={!isDirty}
+            title="Reset"
+            onPress={() => reset()}
+          />
         </View>
       </ScrollView>
       <BottomSheet ref={bottomSheetRef}>{renderBottomSheetContent()}</BottomSheet>
@@ -291,5 +320,6 @@ const styles = StyleSheet.create({
   addReminderText: {
     fontSize: 16,
     fontFamily: FontFamily.RobotoLight
-  }
+  },
+  bottomButton: { flex: 1 }
 })

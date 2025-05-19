@@ -20,7 +20,7 @@ const SCALE = 0.98
 
 const ThemedButton: React.FC<ThemedButtonProps> = ({
   style,
-  primary = true,
+  primary = false,
   onPress,
   title,
   targetScale = SCALE,
@@ -53,7 +53,6 @@ export default ThemedButton
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     height: HEIGHT,
     borderRadius: HEIGHT / 2,
     justifyContent: 'center',

@@ -1,23 +1,25 @@
 import Header from '@/components/common/Header'
 import Icon from '@/components/ui/Icon'
+import { ThemedText } from '@/components/ui/ThemedText'
 import { Colors } from '@/constants/Colors'
 import { FontFamily } from '@/constants/FontFamily'
 import { CONTAINER_PADDING } from '@/constants/global'
 import { habitSchema } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { useDatabase } from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
+import { Habit } from '@/types/types'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { eq } from 'drizzle-orm'
 import { router } from 'expo-router'
 import React from 'react'
-import { Pressable, StatusBar, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StatusBar, StyleSheet, View } from 'react-native'
 import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator
 } from 'react-native-draggable-flatlist'
 import Animated, { FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { db } from '../_layout'
 
 const Page = () => {
   const insets = useSafeAreaInsets()
@@ -25,7 +27,7 @@ const Page = () => {
   const theme = useColorScheme()
   const habits = useStore(state => state.habits)
   const setHabits = useStore(state => state.setHabits)
-
+  const { db } = useDatabase()
   const filterHabits = habits.filter(habit => habit.isArchived === false)
 
   const updateHabitsOrderInDB = async (habits: Habit[]) => {
@@ -54,7 +56,9 @@ const Page = () => {
             }}
             disabled={isActive}
           >
-            <Text style={styles.title}>{item.title}</Text>
+            <ThemedText type="subtitle" darkColor="#000">
+              {item.title}
+            </ThemedText>
             <Pressable onPressIn={drag}>
               <Icon name="menu" color={'#000'} />
             </Pressable>

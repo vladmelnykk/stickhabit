@@ -52,7 +52,7 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
         </View>
         <View style={styles.colContainer}>
           <View style={[styles.infoPanel, , { backgroundColor: Colors[theme].secondary }]}>
-            <ThemedText type="subtitle">{completionRate.toFixed(2)}%</ThemedText>
+            <ThemedText type="subtitle">{completionRate.toFixed(0)}%</ThemedText>
             <ThemedText type="default">Completion rate</ThemedText>
           </View>
           <View style={[styles.infoPanel, , { backgroundColor: Colors[theme].secondary }]}>

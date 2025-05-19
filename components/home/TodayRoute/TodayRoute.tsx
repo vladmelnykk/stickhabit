@@ -1,5 +1,6 @@
 import { ThemedText } from '@/components/ui/ThemedText'
 import { useStore } from '@/store/store'
+import { TodayHabit } from '@/types/types'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { isToday } from 'date-fns'
 import React, { useCallback } from 'react'
@@ -36,7 +37,6 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
 
       if (data === null || data.length === 0) return
 
-      // TODO: use without isArchived habits
       const todayHabits = data.filter(habit => {
         return habit.daysOfWeek.includes(today.getDay()) && habit.isArchived === false
       })
@@ -113,18 +113,8 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingVertical: 20,
-              zIndex: 1000
-            }}
-          >
-            <ThemedText type="small" style={{ textAlign: 'center' }}>
-              No uncompleted habits
-            </ThemedText>
+          <View style={styles.emptyListContainer}>
+            <ThemedText style={{ textAlign: 'center' }}>No uncompleted habits</ThemedText>
           </View>
         }
       />
@@ -166,5 +156,11 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     gap: 12
+  },
+  emptyListContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20
   }
 })

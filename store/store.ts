@@ -1,3 +1,4 @@
+import { Habit, Theme } from '@/types/types'
 import { create } from 'zustand'
 
 interface Store {

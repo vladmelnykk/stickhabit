@@ -1,4 +1,5 @@
 import { useStore } from '@/store/store'
+import { WeeklyHabit } from '@/types/types'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { endOfISOWeek, startOfISOWeek } from 'date-fns'
 import React, { useMemo } from 'react'

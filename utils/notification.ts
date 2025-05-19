@@ -1,5 +1,17 @@
 import * as Notifications from 'expo-notifications'
 
+async function registerForPushNotificationsAsync(): Promise<boolean> {
+  const { status } = await Notifications.getPermissionsAsync()
+  if (status !== 'granted') {
+    const { status: newStatus } = await Notifications.requestPermissionsAsync()
+    if (newStatus !== 'granted') {
+      console.log('Permission for notifications was denied')
+      return false
+    }
+  }
+  return true
+}
+
 async function scheduleHabitNotification(
   title: string,
   body: string,
@@ -65,4 +77,9 @@ async function refreshHabitNotifications({
   return newNotificationIds
 }
 
-export { cancelAllHabitNotifications, refreshHabitNotifications, scheduleHabitNotification }
+export {
+  cancelAllHabitNotifications,
+  refreshHabitNotifications,
+  registerForPushNotificationsAsync,
+  scheduleHabitNotification
+}

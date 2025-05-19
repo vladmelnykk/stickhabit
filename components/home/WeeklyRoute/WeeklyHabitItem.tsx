@@ -1,6 +1,7 @@
 import HabitOverviewCard from '@/components/common/HabitOverviewCard'
 import DayIndicator from '@/components/ui/DayIndicator'
 import { WINDOW_WIDTH } from '@/constants/global'
+import { WeeklyHabit } from '@/types/types'
 import React from 'react'
 
 const DAYS_OF_WEEK = [

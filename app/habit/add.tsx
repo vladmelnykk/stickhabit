@@ -1,4 +1,4 @@
-import BottomSheet from '@/components/common/BottomSheet'
+import BottomSheet from '@/components/bottomSheet/BottomSheet'
 import Header from '@/components/common/Header'
 import ColorList from '@/components/habit-form/ColorList'
 import ReminderControls from '@/components/habit-form/ReminderControls'
@@ -12,6 +12,7 @@ import { FontFamily } from '@/constants/FontFamily'
 import { CONTAINER_PADDING } from '@/constants/global'
 import { habitSchema } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { useDatabase } from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
 import { createHabit } from '@/utils/habit'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
@@ -22,13 +23,14 @@ import { ScrollView } from 'react-native-gesture-handler'
 import Animated, { FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
-const ColorPicker = lazy(() => import('@/components/habit-form/ColorPicker'))
+const ColorPicker = lazy(() => import('@/components/bottomSheet/ColorPicker'))
 
 const DAYS = 7
 
 const Page = () => {
   const habits = useStore(state => state.habits)
   const theme = useColorScheme()
+  const { db } = useDatabase()
   const insets = useSafeAreaInsets()
   const bottomSheetRef = useRef<BottomSheetMethods>(null)
 
@@ -96,7 +98,7 @@ const Page = () => {
     } satisfies typeof habitSchema.$inferInsert
 
     try {
-      await createHabit(habitData, isReminderEnabled ? reminders : [])
+      await createHabit(db, habitData, isReminderEnabled ? reminders : [])
 
       Toast.show({ type: 'success', text1: 'Success', text2: 'Habit saved successfully!' })
       router.back()
@@ -170,7 +172,7 @@ const Page = () => {
           setReminders={setReminders}
         />
 
-        <ThemedButton title="Create" onPress={handleSave} />
+        <ThemedButton title="Create" primary onPress={handleSave} />
       </ScrollView>
 
       <Suspense fallback={null}>

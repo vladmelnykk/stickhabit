@@ -2,6 +2,7 @@ import { Colors } from '@/constants/Colors'
 import { FontFamily } from '@/constants/FontFamily'
 import { MAX_REMINDERS } from '@/constants/global'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { registerForPushNotificationsAsync } from '@/utils/notification'
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import React, { useState } from 'react'
 import { Platform, StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
@@ -63,12 +64,23 @@ const ReminderControls: React.FC<ReminderControlsProps> = ({
     }
   }
 
-  const handleAddReminder = () => {
+  const handleAddReminder = async () => {
     if (reminders.length >= MAX_REMINDERS) {
       Toast.show({
         type: 'error',
         text1: 'Oops!',
         text2: `You can only add up to ${MAX_REMINDERS} reminders`
+      })
+      return
+    }
+
+    const isNotificationsEnabled = await registerForPushNotificationsAsync()
+
+    if (!isNotificationsEnabled) {
+      Toast.show({
+        type: 'error',
+        text1: 'Oops!',
+        text2: 'Notifications are not enabled'
       })
       return
     }
