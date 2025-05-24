@@ -1,15 +1,11 @@
-import { Colors } from '@/constants/Colors'
+import { Colors, DarkTheme, LightTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import '@/i18n'
 import i18n from '@/i18n'
 import LocaleConfig from '@/locales/calendar'
 import SQLiteProvider from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
-import {
-  DefaultTheme,
-  DarkTheme as NavigationDarkTheme,
-  ThemeProvider
-} from '@react-navigation/native'
+import { ThemeProvider } from '@react-navigation/native'
 import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack } from 'expo-router'
 import * as SystemUI from 'expo-system-ui'
@@ -18,29 +14,6 @@ import { StatusBar, StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
 
-const DarkTheme: typeof NavigationDarkTheme = {
-  ...NavigationDarkTheme,
-  colors: {
-    ...NavigationDarkTheme.colors,
-    background: Colors.dark.background,
-    card: Colors.dark.background,
-    primary: Colors.dark.tint,
-    text: Colors.dark.text
-  }
-}
-
-const LightTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: Colors.light.background,
-    card: Colors.light.background,
-    primary: Colors.light.tint,
-    text: Colors.light.text
-  }
-}
-
-// TODO: Is it possible to remove this?
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -53,8 +26,6 @@ const language = useStore.getState().language
 
 i18n.changeLanguage(language)
 LocaleConfig.defaultLocale = language || 'en'
-
-// Notifications.cancelAllScheduledNotificationsAsync()
 
 SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
@@ -111,9 +82,6 @@ export default function RootLayout() {
             }}
           />
         </SQLiteProvider>
-        {/*         
-        // TODO: fix Toast
-        @ts-ignore */}
         <Toast config={toastConfig} visibilityTime={1500} swipeable={false} />
       </ThemeProvider>
     </GestureHandlerRootView>

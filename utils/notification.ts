@@ -1,5 +1,9 @@
+import { habitSchema } from '@/db/schema/habits'
+import i18n from '@/i18n'
+import { Habit } from '@/types/types'
+import { eq } from 'drizzle-orm'
+import { drizzle } from 'drizzle-orm/expo-sqlite'
 import * as Notifications from 'expo-notifications'
-
 async function registerForPushNotificationsAsync(): Promise<boolean> {
   const { status } = await Notifications.getPermissionsAsync()
   if (status !== 'granted') {
@@ -43,6 +47,26 @@ async function scheduleHabitNotification(
   return ids
 }
 
+async function rescheduleAllHabitNotifications(db: ReturnType<typeof drizzle>, habits: Habit[]) {
+  for (const habit of habits) {
+    // Cancel all notifications and schedule new ones
+    const newNotificationIds = await refreshHabitNotifications({
+      daysOfWeek: habit.daysOfWeek,
+      notificationIdsToCancel: habit.notificationIds,
+      title: habit.title,
+      reminders: habit.notificationTime.map(time => new Date(time))
+    })
+
+    // Update habit
+    await db
+      .update(habitSchema)
+      .set({
+        notificationIds: newNotificationIds
+      })
+      .where(eq(habitSchema.id, habit.id))
+  }
+}
+
 async function cancelAllHabitNotifications(notificationIds: string[]) {
   for (const id of notificationIds) {
     await Notifications.cancelScheduledNotificationAsync(id)
@@ -65,10 +89,13 @@ async function refreshHabitNotifications({
   await cancelAllHabitNotifications(notificationIdsToCancel)
 
   for (const reminder of reminders) {
-    // TODO: localize notification
+    console.log(i18n.language)
+
+    console.log(i18n.t('habit.notifications.body'))
+
     const ids = await scheduleHabitNotification(
-      `Time for «${title}»`,
-      'Stay consistent with your habit!',
+      i18n.t('habit.notifications.title', { title }),
+      i18n.t('habit.notifications.body'),
       reminder,
       daysOfWeek
     )
@@ -82,5 +109,6 @@ export {
   cancelAllHabitNotifications,
   refreshHabitNotifications,
   registerForPushNotificationsAsync,
+  rescheduleAllHabitNotifications,
   scheduleHabitNotification
 }

@@ -15,10 +15,9 @@ export const TOOLTIP_WIDTH = BAR_WIDTH + SPACING
 interface BarChartProps {
   data: barDataItem[]
   maxValue: number
-  onPress: (item: any, index: number) => void
 }
 
-const BarChart: React.FC<BarChartProps> = ({ data, maxValue, onPress }) => {
+const BarChart: React.FC<BarChartProps> = ({ data, maxValue }) => {
   const theme = useColorScheme()
 
   const renderTooltip = (item: barDataItem, index: number) => {
@@ -69,7 +68,6 @@ const BarChart: React.FC<BarChartProps> = ({ data, maxValue, onPress }) => {
       highlightEnabled
       focusBarOnPress
       endSpacing={0}
-      onPress={onPress}
       focusedBarConfig={{ color: Colors[theme].tint }}
       roundedTop
       formatYLabel={(value: string) => String(Number(value))}

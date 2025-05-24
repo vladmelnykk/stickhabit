@@ -2,7 +2,9 @@ import { Colors } from '@/constants/Colors'
 import { type Language, LANGUAGES } from '@/constants/Language'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import LocaleConfig from '@/locales/calendar'
+import { useDatabase } from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
+import { rescheduleAllHabitNotifications } from '@/utils/notification'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -12,6 +14,7 @@ import { ThemedText } from '../ui/ThemedText'
 const LanguagePicker = () => {
   const theme = useColorScheme()
   const { t, i18n } = useTranslation()
+  const { db } = useDatabase()
   const currentLanguage = useStore(state => state.language)
   const setLanguage = useStore(state => state.setLanguage)
 
@@ -19,6 +22,7 @@ const LanguagePicker = () => {
     i18n.changeLanguage(value)
     setLanguage(value)
     LocaleConfig.defaultLocale = i18n.language // Update calendar locale
+    rescheduleAllHabitNotifications(db, useStore.getState().habits) // Reschedule notifications after language change
   }
 
   return (

@@ -35,11 +35,7 @@ const getGridData = (habit: Habit) => {
     const habitDate = new Date(date)
 
     // calculate difference in days
-    // TODO: in Sun check cause old diffDays returns value bigger on 1 than differenceInDays() *
-    // const diffDays = Math.round((habitDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
     const diffDays = differenceInDays(habitDate, startDate)
-    // console.log(habit.title, diffDays, differenceInDays(habitDate, startDate))
-    // console.log(habit.title, differenceInDays(habitDate, startDate))
 
     // if difference in days is between 0 and 126
     if (diffDays >= 0 && diffDays < 126) {

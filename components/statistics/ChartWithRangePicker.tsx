@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Colors'
 import { WINDOW_WIDTH } from '@/constants/global'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useStore } from '@/store/store'
-import React, { useCallback, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { barDataItem, lineDataItem } from 'react-native-gifted-charts'
 import Dropdown from '../common/Dropdown'
@@ -39,15 +39,6 @@ const ChartWithRangePicker: React.FC<ChartWithRangePickerProps> = ({
   const habits = useStore(state => state.habits)
   const { i18n } = useTranslation()
   const [selectedRangeIndex, setSelectedRangeIndex] = React.useState<number>(0)
-  const [selectedBarIndex, setSelectedBarIndex] = React.useState<number>(-1)
-
-  // TODO: Does it need to be here?
-  const onBarPress = useCallback(
-    (item: any, index: number) => {
-      setSelectedBarIndex(selectedBarIndex === index ? -1 : index)
-    },
-    [selectedBarIndex]
-  )
 
   const { data, maxValue } = useMemo(
     () => buildChartData(habits, selectedRangeIndex, i18n.language as Language),
@@ -74,7 +65,7 @@ const ChartWithRangePicker: React.FC<ChartWithRangePickerProps> = ({
       <View>
         {/* TODO: fix Layout.animation configuration isAnimated  */}
         {chartType === 'bar' ? (
-          <BarChart data={data} maxValue={maxValue} onPress={onBarPress} />
+          <BarChart data={data} maxValue={maxValue} />
         ) : (
           <LineChart data={data} />
         )}

@@ -8,19 +8,56 @@ import { habitSchema } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useDatabase } from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
-import { Habit } from '@/types/types'
+import { Habit, Theme } from '@/types/types'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { eq } from 'drizzle-orm'
 import { router } from 'expo-router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StatusBar, StyleSheet, View } from 'react-native'
-import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator
-} from 'react-native-draggable-flatlist'
+import { ListRenderItemInfo, Pressable, StatusBar, StyleSheet, View } from 'react-native'
 import Animated, { FadeInUp } from 'react-native-reanimated'
+import ReorderableList, {
+  ReorderableListReorderEvent,
+  useIsActive,
+  useReorderableDrag
+} from 'react-native-reorderable-list'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+interface ListItemProps {
+  id: number
+  color: string
+  title: string
+  theme: Exclude<Theme, 'system'>
+}
+const ListItem: React.FC<ListItemProps> = React.memo(({ color, id, theme, title }) => {
+  const drag = useReorderableDrag()
+  const isActive = useIsActive()
+  return (
+    <View style={styles.containerItem}>
+      <Pressable
+        style={[
+          styles.listItem,
+          {
+            backgroundColor: color || '#fff',
+            borderColor: Colors[theme].accent
+          }
+        ]}
+        onPress={() => {
+          router.navigate({ pathname: '/habit/[id]', params: { id: id } })
+        }}
+        disabled={isActive}
+      >
+        <ThemedText type="subtitle" darkColor="#000">
+          {title}
+        </ThemedText>
+        <Pressable onPressIn={drag}>
+          <Icon name="menu" color={'#000'} />
+        </Pressable>
+      </Pressable>
+    </View>
+  )
+})
+ListItem.displayName = 'ListItem'
 
 const Page = () => {
   const insets = useSafeAreaInsets()
@@ -40,34 +77,18 @@ const Page = () => {
     )
   }
 
-  const renderItem = ({ item, drag, isActive }: RenderItemParams<Habit>) => {
-    return (
-      <View style={styles.containerItem}>
-        <ScaleDecorator activeScale={0.97}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.listItem,
-              {
-                backgroundColor: item.color || '#fff',
-                borderColor: Colors[theme].accent,
-                opacity: pressed ? 0.8 : 1
-              }
-            ]}
-            onPress={() => {
-              router.navigate({ pathname: '/habit/[id]', params: { id: item.id } })
-            }}
-            disabled={isActive}
-          >
-            <ThemedText type="subtitle" darkColor="#000">
-              {item.title}
-            </ThemedText>
-            <Pressable onPressIn={drag}>
-              <Icon name="menu" color={'#000'} />
-            </Pressable>
-          </Pressable>
-        </ScaleDecorator>
-      </View>
-    )
+  const renderItem = ({ item }: ListRenderItemInfo<Habit>) => {
+    return <ListItem color={item.color} id={item.id} theme={theme} title={item.title} />
+  }
+
+  const onReorder = ({ from, to }: ReorderableListReorderEvent) => {
+    const newHabits = [...filterHabits]
+
+    const reorderedHabit = newHabits.splice(from, 1)[0] // remove the item from the original array
+    newHabits.splice(to, 0, reorderedHabit)
+
+    setHabits(newHabits)
+    updateHabitsOrderInDB(newHabits)
   }
 
   return (
@@ -77,16 +98,18 @@ const Page = () => {
         <Header title={t('habits.title')} showLogo />
       </Animated.View>
       <View style={styles.draggableContainer}>
-        <DraggableFlatList
-          keyExtractor={(item, index) => index.toString()}
+        <ReorderableList
+          keyExtractor={(item, index) => 'draggable-' + item.id}
           data={filterHabits}
           renderItem={renderItem}
+          cellAnimations={{ opacity: 1 }}
           showsVerticalScrollIndicator={false}
-          onDragEnd={({ data }) => {
-            setHabits(data)
-            updateHabitsOrderInDB(data)
+          onReorder={onReorder}
+          style={styles.draggableContainer}
+          contentContainerStyle={{
+            paddingTop: 20,
+            paddingBottom: tabBarHeight + 10
           }}
-          contentContainerStyle={{ paddingTop: 20, paddingBottom: tabBarHeight + 10 }}
         />
       </View>
     </View>

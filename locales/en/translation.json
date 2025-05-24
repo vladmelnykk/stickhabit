@@ -82,6 +82,10 @@
         "success": "Habit saved successfully!",
         "error": "Failed to create habit"
       }
+    },
+    "notifications": {
+      "title": "Time for {{title}}",
+      "body": "It's time to complete your habit!"
     }
   },
   "settings": {
