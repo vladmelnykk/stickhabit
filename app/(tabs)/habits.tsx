@@ -13,6 +13,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { eq } from 'drizzle-orm'
 import { router } from 'expo-router'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pressable, StatusBar, StyleSheet, View } from 'react-native'
 import DraggableFlatList, {
   RenderItemParams,
@@ -25,6 +26,7 @@ const Page = () => {
   const insets = useSafeAreaInsets()
   const tabBarHeight = useBottomTabBarHeight()
   const theme = useColorScheme()
+  const { t } = useTranslation()
   const habits = useStore(state => state.habits)
   const setHabits = useStore(state => state.setHabits)
   const { db } = useDatabase()
@@ -72,7 +74,7 @@ const Page = () => {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar backgroundColor={Colors[theme].background} />
       <Animated.View entering={FadeInUp}>
-        <Header title="My Habits" showLogo />
+        <Header title={t('habits.title')} showLogo />
       </Animated.View>
       <View style={styles.draggableContainer}>
         <DraggableFlatList

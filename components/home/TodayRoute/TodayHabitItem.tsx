@@ -1,12 +1,14 @@
 import ProgressHabitCard from '@/components/home/TodayRoute/ProgressHabitCard'
 import Icon from '@/components/ui/Icon'
 import { ThemedText } from '@/components/ui/ThemedText'
+import { DANGER_COLOR } from '@/constants/Colors'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
 import { habitSchema } from '@/db/schema/habits'
 import { useDatabase } from '@/providers/DatabaseProvider'
 import { TodayHabit } from '@/types/types'
 import { eq } from 'drizzle-orm'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import ReanimatedSwipeable, {
   type SwipeableMethods
@@ -50,6 +52,7 @@ function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
 const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
   const swipeableRef = React.useRef<SwipeableMethods>(null)
 
+  const { t } = useTranslation()
   const { db } = useDatabase()
   const handleSwipe = async (direction: string) => {
     if (direction === 'left') {
@@ -61,15 +64,15 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
           if (updatedDates.times === habit.timesPerDay) {
             Toast.show({
               type: 'success',
-              text1: 'Success!',
-              text2: `You have completed ${habit.title}`
+              text1: t('toast.success'),
+              text2: t('home.toast.today.success', { title: habit.title })
             })
           }
         } else {
           Toast.show({
             type: 'error',
-            text1: 'Oops!',
-            text2: 'You have already completed this habit today'
+            text1: t('toast.oops'),
+            text2: t('home.toast.today.error')
           })
           swipeableRef.current?.close()
           return
@@ -150,7 +153,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 16
   },
   leftAction: {
-    backgroundColor: '#f75555',
+    backgroundColor: DANGER_COLOR,
     height: '100%',
     width: '100%',
     alignItems: 'flex-end',

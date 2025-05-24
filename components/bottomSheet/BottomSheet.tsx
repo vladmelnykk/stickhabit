@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
   bottomSheetView: {
     paddingHorizontal: 30,
     paddingBottom: 30,
-    paddingTop: 20
+    paddingTop: 20,
+    gap: 20
   }
 })

@@ -1,4 +1,6 @@
 import BottomSheet from '@/components/bottomSheet/BottomSheet'
+import BottomSheetHeader from '@/components/bottomSheet/BottomSheetHeader'
+import LanguagePicker from '@/components/bottomSheet/LanguagePicker'
 import ThemePicker from '@/components/bottomSheet/ThemePicker'
 import Header from '@/components/common/Header'
 import Icon from '@/components/ui/Icon'
@@ -10,9 +12,12 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import { useStore } from '@/store/store'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { router } from 'expo-router'
-import React from 'react'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+type BottomSheetContentType = 'theme' | 'language'
 
 interface AppearanceItem {
   title: string
@@ -23,25 +28,41 @@ interface AppearanceItem {
 const Page = () => {
   const insets = useSafeAreaInsets()
   const theme = useColorScheme()
-
+  const { t } = useTranslation()
   const selectedTheme = useStore(state => state.theme)
-
+  const currentLanguage = useStore(state => state.language)
   const bottomSheetRef = React.useRef<BottomSheetMethods>(null)
+  const [bottomSheetContentType, setBottomSheetContentType] =
+    useState<BottomSheetContentType>('theme')
   const appearanceItems: AppearanceItem[] = [
     {
-      title: 'Theme',
-      value: THEME_OPTIONS.find(({ value }) => value === selectedTheme)?.label || 'System',
+      title: t('settings.appearance.theme'),
+      value: t(THEME_OPTIONS.find(({ value }) => value === selectedTheme)?.label || 'theme.system'),
       onPress: () => {
+        setBottomSheetContentType('theme')
         bottomSheetRef.current?.expand()
       }
     },
-    // TODO: add language support
     {
-      title: 'Language',
-      value: 'English',
-      onPress: () => {}
+      title: t('settings.appearance.language'),
+      value: t(`language.${currentLanguage}`),
+      onPress: () => {
+        setBottomSheetContentType('language')
+        bottomSheetRef.current?.expand()
+      }
     }
   ]
+
+  const renderBottomSheetContent = () => {
+    switch (bottomSheetContentType) {
+      case 'theme':
+        return <ThemePicker />
+      case 'language':
+        return <LanguagePicker />
+      default:
+        return null
+    }
+  }
 
   const AppearanceItem = ({ title, value, onPress }: AppearanceItem) => (
     <Pressable
@@ -64,7 +85,11 @@ const Page = () => {
         { paddingTop: insets.top, backgroundColor: Colors[theme].background }
       ]}
     >
-      <Header title="App Appearance" leftIcon="arrow-left" onLeftPress={() => router.back()} />
+      <Header
+        title={t('settings.appearance.title')}
+        leftIcon="arrow-left"
+        onLeftPress={() => router.back()}
+      />
       <View>
         {appearanceItems.map(item => (
           <AppearanceItem key={item.title} {...item} />
@@ -72,7 +97,8 @@ const Page = () => {
       </View>
 
       <BottomSheet ref={bottomSheetRef}>
-        <ThemePicker />
+        <BottomSheetHeader title={t(`bottomSheet.title.${bottomSheetContentType}`)} />
+        {renderBottomSheetContent()}
       </BottomSheet>
     </View>
   )

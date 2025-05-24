@@ -3,16 +3,10 @@ import DayIndicator from '@/components/ui/DayIndicator'
 import { WINDOW_WIDTH } from '@/constants/global'
 import { WeeklyHabit } from '@/types/types'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
-const DAYS_OF_WEEK = [
-  { id: 1, label: 'Mon' },
-  { id: 2, label: 'Tue' },
-  { id: 3, label: 'Wed' },
-  { id: 4, label: 'Thu' },
-  { id: 5, label: 'Fri' },
-  { id: 6, label: 'Sat' },
-  { id: 0, label: 'Sun' }
-]
+// 0 - Sun, 1 - Mon, 2 - Tue, 3 - Wed, 4 - Thu, 5 - Fri, 6 - Sat
+const DAYS_OF_WEEK = [1, 2, 3, 4, 5, 6, 0] as const
 
 const CIRCLE_SIZE = WINDOW_WIDTH / 10
 
@@ -20,17 +14,18 @@ interface WeeklyHabitItemProps {
   habit: WeeklyHabit
 }
 const WeeklyHabitItem: React.FC<WeeklyHabitItemProps> = ({ habit }) => {
+  const { t } = useTranslation()
   return (
     <HabitOverviewCard habit={habit}>
       {DAYS_OF_WEEK.map(day => {
-        const isCompleted = habit.completedDaysThisWeek.includes(day.id)
+        const isCompleted = habit.completedDaysThisWeek.includes(day)
 
         return (
           <DayIndicator
             size={CIRCLE_SIZE}
-            key={day.id}
+            key={day}
             color={habit.color}
-            label={day.label}
+            label={t(`days.short.${day}`)}
             isCompleted={isCompleted}
           />
         )

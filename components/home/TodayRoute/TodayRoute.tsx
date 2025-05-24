@@ -4,6 +4,7 @@ import { TodayHabit } from '@/types/types'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { isToday } from 'date-fns'
 import React, { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated'
 import TodayHabitItem from './TodayHabitItem'
@@ -17,6 +18,7 @@ interface TodayRouteProps {
 const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef }) => {
   const data = useStore(state => state.habits)
   const tabBarHeight = useBottomTabBarHeight()
+  const { t } = useTranslation()
 
   const [todayUncompletedHabits, setTodayUncompletedHabits] = React.useState<TodayHabit[]>([])
   const [todayCompletedHabits, setTodayCompletedHabits] = React.useState<TodayHabit[]>([])
@@ -104,7 +106,7 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
         scrollEnabled={false}
         // TODO: add sticky header when there is no completed habits
         // StickyHeaderComponent={() => <ThemedText type="subtitle">Uncompleted</ThemedText>}
-        ListHeaderComponent={() => <ThemedText type="subtitle">Uncompleted</ThemedText>}
+        ListHeaderComponent={() => <ThemedText type="subtitle">{t('home.uncompleted')}</ThemedText>}
         overScrollMode="never"
         data={todayUncompletedHabits}
         keyExtractor={item => item.id.toString()}
@@ -114,7 +116,7 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyListContainer}>
-            <ThemedText style={{ textAlign: 'center' }}>No uncompleted habits</ThemedText>
+            <ThemedText style={{ textAlign: 'center' }}>{t('home.noUncompleted')}</ThemedText>
           </View>
         }
       />
@@ -127,7 +129,9 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
           <Animated.FlatList
             skipEnteringExitingAnimations
             // itemLayoutAnimation={LinearTransition}
-            ListHeaderComponent={() => <ThemedText type="subtitle">Completed</ThemedText>}
+            ListHeaderComponent={() => (
+              <ThemedText type="subtitle">{t('home.completed')}</ThemedText>
+            )}
             scrollEnabled={false}
             overScrollMode="never"
             data={todayCompletedHabits}

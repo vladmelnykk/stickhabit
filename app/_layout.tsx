@@ -1,6 +1,10 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import '@/i18n'
+import i18n from '@/i18n'
+import LocaleConfig from '@/locales/calendar'
 import SQLiteProvider from '@/providers/DatabaseProvider'
+import { useStore } from '@/store/store'
 import {
   DefaultTheme,
   DarkTheme as NavigationDarkTheme,
@@ -13,6 +17,7 @@ import React, { useMemo } from 'react'
 import { StatusBar, StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
+
 const DarkTheme: typeof NavigationDarkTheme = {
   ...NavigationDarkTheme,
   colors: {
@@ -43,6 +48,11 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false
   })
 })
+
+const language = useStore.getState().language
+
+i18n.changeLanguage(language)
+LocaleConfig.defaultLocale = language || 'en'
 
 // Notifications.cancelAllScheduledNotificationsAsync()
 

@@ -1,19 +1,18 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import { useSharedValue } from 'react-native-reanimated'
 import ColorPickerRN, { HueSlider, Panel1, Preview } from 'reanimated-color-picker'
 import ThemedButton from '../ui/ThemedButton'
-import BottomSheetHeader from './BottomSheetHeader'
 interface Props {
   onPickColor: (pickedColor: string | null) => void
 }
 
 const ColorPicker: React.FC<Props> = ({ onPickColor }) => {
   const pickedColor = useSharedValue<string | null>(null)
-
+  const { t } = useTranslation()
   return (
     <View style={styles.container}>
-      <BottomSheetHeader title="Pick Color" />
       <ColorPickerRN
         style={styles.colorPicker}
         onComplete={color => {
@@ -28,7 +27,7 @@ const ColorPicker: React.FC<Props> = ({ onPickColor }) => {
       </ColorPickerRN>
       <ThemedButton
         primary
-        title="Pick"
+        title={t('toast.confirm')}
         style={styles.button}
         onPress={() => {
           onPickColor(pickedColor.value)

@@ -1,5 +1,6 @@
 import { FontFamily } from '@/constants/FontFamily'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
 interface HabitCardProps {
@@ -10,11 +11,12 @@ interface HabitCardProps {
 }
 
 const ProgressHabitCard: React.FC<HabitCardProps> = ({ title, color, goal, progress }) => {
+  const { t } = useTranslation()
   return (
     <View style={[styles.container, { backgroundColor: color || '#fff' }]}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.progress}>
-        Progress {progress} / {goal}
+        {t('home.progress')} {progress} / {goal}
       </Text>
     </View>
   )

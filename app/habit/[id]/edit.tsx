@@ -1,4 +1,5 @@
 import BottomSheet from '@/components/bottomSheet/BottomSheet'
+import BottomSheetHeader from '@/components/bottomSheet/BottomSheetHeader'
 import DeleteHabit from '@/components/bottomSheet/DeleteHabit'
 import Header from '@/components/common/Header'
 import ColorList from '@/components/habit-form/ColorList'
@@ -18,6 +19,7 @@ import { archiveHabit, deleteHabit, updateHabit } from '@/utils/habit'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { Redirect, router, useLocalSearchParams } from 'expo-router'
 import React, { lazy, Suspense, useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
@@ -42,6 +44,7 @@ const Page = () => {
   const theme = useColorScheme()
   const { db } = useDatabase()
   const insets = useSafeAreaInsets()
+  const { t } = useTranslation()
   const habits = useStore(state => state.habits)
 
   const numericId = Number(id)
@@ -76,23 +79,24 @@ const Page = () => {
         await archiveHabit(db, habit)
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: `Successfully archived ${habit?.title}`
+          text1: t('toast.success'),
+          text2: t('habit.toast.archive.success', { title: habit.title })
         })
         router.replace('/habits')
       } catch {
         Toast.show({
           type: 'error',
-          text1: 'Something went wrong',
-          text2: `Failed to archive habit`
+          text1: t('toast.somethingWentWrong'),
+          text2: t('habit.toast.archive.error')
         })
       }
     }
 
     confirm(
-      'Archive Habit',
-      'Are you sure you want to archive this habit? This will remove all history and keep the habit in your archive.',
-      'Archive',
+      t('habit.edit.archive'),
+      t('habit.toast.archive.confirm'),
+      t('habit.toast.archive.confirmArchive'),
+      t('toast.cancel'),
       onConfirm
     )
   }
@@ -103,23 +107,24 @@ const Page = () => {
         deleteHabit(db, habit)
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: `Successfully deleted ${habit?.title}`
+          text1: t('toast.success'),
+          text2: t('habit.toast.delete.success', { title: habit.title })
         })
         router.replace('/habits')
       } catch {
         Toast.show({
           type: 'error',
-          text1: 'Something went wrong',
-          text2: `Failed to save habit`
+          text1: t('toast.somethingWentWrong'),
+          text2: t('habit.toast.delete.error')
         })
       }
     }
 
     confirm(
       'Delete Habit',
-      'Are you sure you want to delete this habit? This will remove all history and delete the habit permanently.',
-      'Delete',
+      t('habit.toast.delete.confirm'),
+      t('habit.toast.delete.confirmDelete'),
+      t('toast.cancel'),
       onConfirm
     )
   }
@@ -165,13 +170,17 @@ const Page = () => {
     if (isDirty || isReminderChanged) {
       // Validate data
       const validationError = !formData.title
-        ? 'Please enter a habit name'
+        ? t('habit.toast.validation.name')
         : !formData.color
-        ? 'Please select a color'
+        ? t('habit.toast.validation.color')
         : null
 
       if (validationError) {
-        Toast.show({ type: 'error', text1: 'Validation Error', text2: validationError })
+        Toast.show({
+          type: 'error',
+          text1: t('habit.toast.validation.error'),
+          text2: validationError
+        })
         return
       }
 
@@ -187,15 +196,15 @@ const Page = () => {
 
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: `Habit updated successfully`
+          text1: t('toast.success'),
+          text2: t('habit.toast.update.success', { title: updatedHabit.title })
         })
         router.back()
       } catch {
         Toast.show({
           type: 'error',
-          text1: 'Something went wrong',
-          text2: `Failed to save habit`
+          text1: t('toast.somethingWentWrong'),
+          text2: t('habit.toast.update.error')
         })
       }
     }
@@ -209,7 +218,7 @@ const Page = () => {
       ]}
     >
       <Header
-        title="Habit"
+        title={t('habit.edit.title')}
         leftIcon="arrow-left"
         onLeftPress={() => router.back()}
         renderRightItem={() => (
@@ -235,15 +244,15 @@ const Page = () => {
       >
         <View style={styles.form}>
           <View style={styles.sectionContainer}>
-            <ThemedText type="subtitle">Habit Name</ThemedText>
+            <ThemedText type="subtitle">{t('habit.name')}</ThemedText>
             <Input
-              placeholder="Habit Name"
+              placeholder={t('habit.name')}
               value={formData.title}
               onChangeText={text => setEditFormData({ ...editFormData, title: text })}
             />
           </View>
 
-          <ThemedText type="subtitle">Color</ThemedText>
+          <ThemedText type="subtitle">{t('habit.color')}</ThemedText>
           <ColorList
             color={formData.color}
             onColorWheelPress={() => {
@@ -270,16 +279,27 @@ const Page = () => {
         </View>
 
         <View style={styles.rowContainer}>
-          <ThemedButton title="Save" style={styles.bottomButton} primary onPress={handleSave} />
+          <ThemedButton
+            title={t('habit.edit.save')}
+            style={styles.bottomButton}
+            primary
+            onPress={handleSave}
+          />
           <ThemedButton
             style={styles.bottomButton}
             disabled={!isDirty}
-            title="Reset"
+            title={t('habit.edit.reset')}
             onPress={() => reset()}
           />
         </View>
       </ScrollView>
-      <BottomSheet ref={bottomSheetRef}>{renderBottomSheetContent()}</BottomSheet>
+      <BottomSheet ref={bottomSheetRef}>
+        <BottomSheetHeader
+          title={t(`bottomSheet.title.${bottomSheetContentType}`)}
+          titleStyle={bottomSheetContentType === 'delete' && styles.dangerText}
+        />
+        {renderBottomSheetContent()}
+      </BottomSheet>
     </View>
   )
 }
@@ -321,5 +341,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: FontFamily.RobotoLight
   },
-  bottomButton: { flex: 1 }
+  bottomButton: { flex: 1 },
+  dangerText: {
+    color: DANGER_COLOR
+  }
 })

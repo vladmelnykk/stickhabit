@@ -1,10 +1,11 @@
-export const ChartRange = [
-  // 'Today',
-  'This week',
-  'This month',
-  'Last month',
-  'Last 6 months',
-  'This year',
-  'Last year',
-  'All time'
-].map((item, index) => ({ value: index, label: item }))
+import { resources } from '@/i18n'
+
+export const ChartRange: (keyof typeof resources.en.translation.chartRange)[] = [
+  'thisWeek',
+  'thisMonth',
+  'lastMonth',
+  'last6Months',
+  'thisYear',
+  'lastYear',
+  'allTime'
+] as const

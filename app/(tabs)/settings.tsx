@@ -7,45 +7,47 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import Feather from '@expo/vector-icons/Feather'
 import { router } from 'expo-router'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface SettingsItem {
-  title: string
+  label: string
   icon: React.ComponentProps<typeof Feather>['name']
   onPress: () => void
 }
 
-const settingsItems: SettingsItem[] = [
-  {
-    title: 'App Appearance',
-    icon: 'settings',
-    onPress: () => {
-      router.push('/settings/appearance')
-    }
-  },
-  {
-    title: 'Data & Analytics',
-    icon: 'database',
-    onPress: () => {
-      router.push('/settings/data-management')
-    }
-  },
-  {
-    title: 'Info',
-    icon: 'info',
-    onPress: () => {
-      router.push('/settings/info')
-    }
-  }
-]
-
 const Page = () => {
   const insets = useSafeAreaInsets()
   const theme = useColorScheme()
+  const { t } = useTranslation()
 
-  const SettingsItem = ({ title, onPress, icon }: SettingsItem) => {
+  const settingsItems: SettingsItem[] = [
+    {
+      label: t('settings.appearance.title'),
+      icon: 'settings',
+      onPress: () => {
+        router.navigate('/settings/appearance')
+      }
+    },
+    {
+      label: t('settings.dataManagement.title'),
+      icon: 'database',
+      onPress: () => {
+        router.navigate('/settings/data-management')
+      }
+    },
+    {
+      label: t('settings.info.title'),
+      icon: 'info',
+      onPress: () => {
+        router.navigate('/settings/info')
+      }
+    }
+  ]
+
+  const SettingsItem = ({ label, onPress, icon }: SettingsItem) => {
     return (
       <Pressable
         style={({ pressed }) => [styles.listItem, { opacity: pressed ? 0.5 : 1 }]}
@@ -53,7 +55,7 @@ const Page = () => {
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <Icon name={icon} color={Colors[theme].text} />
-          <ThemedText type="subtitle">{title}</ThemedText>
+          <ThemedText type="subtitle">{label}</ThemedText>
         </View>
         <Icon name={'chevron-right'} color={Colors[theme].text} />
       </Pressable>
@@ -63,14 +65,14 @@ const Page = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Animated.View entering={FadeInUp}>
-        <Header title="Settings" showLogo />
+        <Header title={t('settings.title')} showLogo />
       </Animated.View>
       <Animated.View
         style={[styles.box, { backgroundColor: Colors[theme].secondary }]}
         entering={FadeInDown}
       >
         {settingsItems.map((item, index) => (
-          <SettingsItem key={index} onPress={item.onPress} title={item.title} icon={item.icon} />
+          <SettingsItem key={index} onPress={item.onPress} label={item.label} icon={item.icon} />
         ))}
       </Animated.View>
     </View>

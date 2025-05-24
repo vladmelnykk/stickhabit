@@ -12,11 +12,11 @@ import { calculateStatistics } from '@/utils/statistics'
 import { format, isToday } from 'date-fns'
 import { Redirect, router, useLocalSearchParams } from 'expo-router'
 import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Calendar, CalendarProps } from 'react-native-calendars'
 import { MarkingProps } from 'react-native-calendars/src/calendar/day/marking'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
 const DATE_TEXT_COLOR = '#fff'
 
 const initialDays = new Array(7).fill(false)
@@ -25,13 +25,11 @@ const Page = () => {
   const { id } = useLocalSearchParams()
   const theme = useColorScheme()
   const insets = useSafeAreaInsets()
-
+  const { t } = useTranslation()
   const habits = useStore(state => state.habits)
 
   const numericId = Number(id)
   const habit = useMemo(() => habits.find(h => h.id === numericId), [habits, numericId])
-
-  console.log(habit?.notificationIds)
 
   if (!habit) {
     return <Redirect href="/habits" />
@@ -40,7 +38,10 @@ const Page = () => {
   const statistics = calculateStatistics([habit])
 
   const frequency =
-    habit && (habit.daysOfWeek.length < 7 ? `${habit.daysOfWeek.length} days per week` : 'Everyday')
+    habit &&
+    (habit.daysOfWeek.length < 7
+      ? `${habit.daysOfWeek.length} ${t('statistics.daysPerWeek')}`
+      : t('statistics.everday'))
 
   const selectedDays = initialDays.map((_, index) => habit.daysOfWeek.includes(index))
 
@@ -88,7 +89,7 @@ const Page = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header
-        title="Habit"
+        title={t('habit.title')}
         leftIcon="arrow-left"
         onLeftPress={() => router.back()}
         renderRightItem={() => (
@@ -107,10 +108,10 @@ const Page = () => {
       >
         <StatisticsPanel {...statistics} title={habit.title} frequency={frequency} />
 
-        <ThemedText type="subtitle">Days</ThemedText>
+        <ThemedText type="subtitle">{t('habit.days')}</ThemedText>
         <WeekdaySelector selectedDays={selectedDays} />
 
-        <ThemedText type="subtitle">Calendar Stats</ThemedText>
+        <ThemedText type="subtitle">{t('habit.calendarStatistics')}</ThemedText>
         <Calendar
           key={theme}
           style={[styles.calendar, { backgroundColor: Colors[theme].background }]}

@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import Animated, {
   useAnimatedStyle,
@@ -17,8 +18,10 @@ interface Props {
 
 const ProgressBar = ({ date = new Date(), progress }: Props) => {
   const theme = useColorScheme()
+  const { t, i18n } = useTranslation()
+
   const width = useSharedValue(0)
-  const formattedDate = date.toLocaleString(undefined, {
+  const formattedDate = date.toLocaleString(i18n.language, {
     weekday: 'long',
     month: 'long',
     day: 'numeric'
@@ -40,9 +43,9 @@ const ProgressBar = ({ date = new Date(), progress }: Props) => {
 
   return (
     <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-        <ThemedText>{formattedDate}</ThemedText>
-        <ThemedText>{`Progress: ${progress.toFixed(0)}%`}</ThemedText>
+      <View style={styles.header}>
+        <ThemedText style={styles.date}>{formattedDate}</ThemedText>
+        <ThemedText>{`${t('home.progress')}: ${progress.toFixed(0)}%`}</ThemedText>
       </View>
       <View
         style={[
@@ -58,9 +61,11 @@ const ProgressBar = ({ date = new Date(), progress }: Props) => {
   )
 }
 
-export default ProgressBar
+export default React.memo(ProgressBar)
 
 const styles = StyleSheet.create({
   container: { height: 20, borderRadius: 20, borderWidth: 0.5, overflow: 'hidden' },
-  flex: { flex: 1 }
+  flex: { flex: 1 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  date: { textTransform: 'capitalize' }
 })

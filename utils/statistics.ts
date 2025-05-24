@@ -1,3 +1,4 @@
+import { Language } from '@/constants/Language'
 import { Habit } from '@/types/types'
 import {
   addDays,
@@ -8,13 +9,20 @@ import {
   getYear,
   isSameDay,
   isSameMonth,
+  Locale,
   startOfDay,
   startOfMonth,
   startOfWeek,
   subMonths
 } from 'date-fns'
+import { enUS, uk } from 'date-fns/locale'
 import { barDataItem } from 'react-native-gifted-charts'
 import { ChartRange } from '../constants/ChartRange'
+
+const localeMap: Record<Language, Locale> = {
+  en: enUS,
+  uk: uk
+}
 
 function calculateStatistics(habits: Habit[]) {
   const minCreatedAt = Math.min(...habits.map(habit => habit.createdAt))
@@ -116,9 +124,15 @@ function calculateStatistics(habits: Habit[]) {
   }
 }
 
-function calculateCompletedHabitsForChart(habits: Habit[], selectedRangeIndex: number) {
+function calculateCompletedHabitsForChart(
+  habits: Habit[],
+  selectedRangeIndex: number,
+  lng: Language
+) {
   const now = new Date()
   const data: (barDataItem & Required<Pick<barDataItem, 'value'>>)[] = []
+  const locale = localeMap[lng] || localeMap.en
+
   const getCompletedCountForDate = (date: Date) => {
     const weekday = date.getDay()
     const currentDayStart = date.getTime()
@@ -141,57 +155,48 @@ function calculateCompletedHabitsForChart(habits: Habit[], selectedRangeIndex: n
     }, 0)
   }
 
-  if (ChartRange[selectedRangeIndex].label === 'Today') {
-    const completed = getCompletedCountForDate(now)
-    data.push({
-      label: 'Today',
-      value: completed,
-      labelTextStyle: { textAlign: 'left' }
-    })
-  }
-
-  if (ChartRange[selectedRangeIndex].label === 'This week') {
+  if (ChartRange[selectedRangeIndex] === 'thisWeek') {
     const start = startOfWeek(now, { weekStartsOn: 1 })
     for (let i = 0; i < 7; i++) {
       const day = addDays(start, i)
-      const label = format(day, 'ccc')
+      const label = format(day, 'ccc', { locale })
       const value = getCompletedCountForDate(day)
       data.push({ label, value })
     }
   }
 
-  if (ChartRange[selectedRangeIndex].label === 'This month') {
+  if (ChartRange[selectedRangeIndex] === 'thisMonth') {
     const start = startOfMonth(now)
     const end = now
     const days = eachDayOfInterval({ start, end })
 
     days.forEach(day => {
-      const label = format(day, 'd') // Just the day number
+      const label = format(day, 'd', { locale }) // Just the day number
       const value = getCompletedCountForDate(day)
       data.push({ label, value })
     })
   }
 
-  if (ChartRange[selectedRangeIndex].label === 'Last month') {
+  if (ChartRange[selectedRangeIndex] === 'lastMonth') {
     const lastMonth = subMonths(now, 1)
     const start = startOfMonth(lastMonth)
     const end = endOfMonth(lastMonth)
     const days = eachDayOfInterval({ start, end })
 
     days.forEach(day => {
-      const label = format(day, 'd')
+      const label = format(day, 'd', { locale })
       const value = getCompletedCountForDate(day)
       data.push({ label, value })
     })
   }
 
-  if (ChartRange[selectedRangeIndex].label === 'Last 6 months') {
+  if (ChartRange[selectedRangeIndex] === 'last6Months') {
     const start = subMonths(now, 5)
     const end = now
     const months = eachMonthOfInterval({ start, end })
 
     months.forEach(monthDate => {
-      const label = format(monthDate, 'MMM')
+      const label = format(monthDate, 'MMM', { locale })
       const start = startOfMonth(monthDate)
       const end = endOfMonth(monthDate)
       const days = eachDayOfInterval({ start, end })
@@ -201,7 +206,7 @@ function calculateCompletedHabitsForChart(habits: Habit[], selectedRangeIndex: n
     })
   }
 
-  if (ChartRange[selectedRangeIndex].label === 'This year') {
+  if (ChartRange[selectedRangeIndex] === 'thisYear') {
     const amountOfMonths = now.getMonth() + 1
 
     for (let month = 0; month < amountOfMonths; month++) {
@@ -210,12 +215,12 @@ function calculateCompletedHabitsForChart(habits: Habit[], selectedRangeIndex: n
       const days = eachDayOfInterval({ start, end })
 
       const total = days.reduce((sum, day) => sum + getCompletedCountForDate(day), 0)
-      const label = format(start, 'MMM')
+      const label = format(start, 'MMM', { locale })
       data.push({ label, value: total })
     }
   }
 
-  if (ChartRange[selectedRangeIndex].label === 'Last year') {
+  if (ChartRange[selectedRangeIndex] === 'lastYear') {
     const lastYear = getYear(now) - 1
     for (let month = 0; month < 12; month++) {
       const start = new Date(lastYear, month, 1)
@@ -223,12 +228,12 @@ function calculateCompletedHabitsForChart(habits: Habit[], selectedRangeIndex: n
       const days = eachDayOfInterval({ start, end })
 
       const total = days.reduce((sum, day) => sum + getCompletedCountForDate(day), 0)
-      const label = format(start, 'MMM')
+      const label = format(start, 'MMM', { locale })
       data.push({ label, value: total })
     }
   }
 
-  if (ChartRange[selectedRangeIndex].label === 'All time') {
+  if (ChartRange[selectedRangeIndex] === 'allTime') {
     const years = new Set<number>()
     habits.forEach(habit => {
       habit.completedDates.forEach(entry => {
@@ -257,9 +262,14 @@ function calculateCompletedHabitsForChart(habits: Habit[], selectedRangeIndex: n
   }
 }
 
-function calculateCompletionRateForChart(habits: Habit[], selectedRangeIndex: number) {
+function calculateCompletionRateForChart(
+  habits: Habit[],
+  selectedRangeIndex: number,
+  lng: Language
+) {
   const now = new Date()
   const data: (barDataItem & Required<Pick<barDataItem, 'value'>>)[] = []
+  const locale = localeMap[lng] || localeMap.en
 
   const getRelevantHabitsForDay = (date: Date) => {
     const weekday = date.getDay()
@@ -297,44 +307,44 @@ function calculateCompletionRateForChart(habits: Habit[], selectedRangeIndex: nu
     data.push({ label, value: avgRate })
   }
 
-  const range = ChartRange[selectedRangeIndex].label
+  const range = ChartRange[selectedRangeIndex]
 
-  if (range === 'Today') {
-    data.push({ label: 'Today', value: getRateForDate(now) })
-  }
+  // if (range === 'Today') {
+  //   data.push({ label: 'Today', value: getRateForDate(now) })
+  // }
 
-  if (range === 'This week') {
+  if (range === 'thisWeek') {
     const start = startOfWeek(now, { weekStartsOn: 1 })
     for (let i = 0; i < 7; i++) {
       const day = addDays(start, i)
-      data.push({ label: format(day, 'ccc'), value: getRateForDate(day) })
+      data.push({ label: format(day, 'ccc', { locale }), value: getRateForDate(day) })
     }
   }
 
-  if (range === 'This month' || range === 'Last month') {
-    const month = range === 'This month' ? now : subMonths(now, 1)
+  if (range === 'thisMonth' || range === 'lastMonth') {
+    const month = range === 'thisMonth' ? now : subMonths(now, 1)
     const days = eachDayOfInterval({
       start: startOfMonth(month),
       end: isSameMonth(month, now) ? now : endOfMonth(month)
     })
 
     days.forEach(day => {
-      data.push({ label: format(day, 'd'), value: getRateForDate(day) })
+      data.push({ label: format(day, 'd', { locale }), value: getRateForDate(day) })
     })
   }
 
-  if (range === 'Last 6 months') {
+  if (range === 'last6Months') {
     const months = eachMonthOfInterval({ start: subMonths(now, 5), end: now })
     months.forEach(monthDate => {
       const isCurrentMonth = isSameMonth(monthDate, now)
       const end = isCurrentMonth ? now : endOfMonth(monthDate)
       const days = eachDayOfInterval({ start: startOfMonth(monthDate), end })
-      addAverageRateForDays(format(monthDate, 'MMM'), days)
+      addAverageRateForDays(format(monthDate, 'MMM', { locale }), days)
     })
   }
 
-  if (range === 'This year' || range === 'Last year') {
-    const year = range === 'This year' ? getYear(now) : getYear(now) - 1
+  if (range === 'thisYear' || range === 'lastYear') {
+    const year = range === 'thisYear' ? getYear(now) : getYear(now) - 1
 
     const amountOfMonths = year === getYear(now) ? now.getMonth() + 1 : 12
 
@@ -342,11 +352,11 @@ function calculateCompletionRateForChart(habits: Habit[], selectedRangeIndex: nu
       const start = new Date(year, month, 1)
       const end = year === getYear(now) && month === now.getMonth() ? now : endOfMonth(start)
       const days = eachDayOfInterval({ start, end })
-      addAverageRateForDays(format(start, 'MMM'), days)
+      addAverageRateForDays(format(start, 'MMM', { locale }), days)
     }
   }
 
-  if (range === 'All time') {
+  if (range === 'allTime') {
     const years = new Set<number>()
     habits.forEach(habit =>
       habit.completedDates.forEach(entry => years.add(new Date(entry.date).getFullYear()))

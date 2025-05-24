@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import type { GestureResponderEvent } from 'react-native'
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import Icon from '../ui/Icon'
@@ -14,8 +15,8 @@ interface ReminderCardProps {
 
 const ReminderCard: React.FC<ReminderCardProps> = ({ time, style, onPress }) => {
   const theme = useColorScheme()
-
-  const formattedDate = time.toLocaleString(undefined, {
+  const { i18n } = useTranslation()
+  const formattedDate = time.toLocaleString(i18n.language, {
     hour: 'numeric',
     minute: 'numeric'
   })

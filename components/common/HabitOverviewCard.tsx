@@ -2,6 +2,7 @@ import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { Habit } from '@/types/types'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import { ThemedText } from '../ui/ThemedText'
 
@@ -11,10 +12,12 @@ interface HabitOverviewCardProps {
 }
 const HabitOverviewCard: React.FC<HabitOverviewCardProps> = ({ children, habit }) => {
   const theme = useColorScheme()
-
+  const { t } = useTranslation()
   const frequency =
-    habit.daysOfWeek.length < 7 ? `${habit.daysOfWeek.length} days per week` : 'Everyday'
-
+    habit &&
+    (habit.daysOfWeek.length < 7
+      ? `${habit.daysOfWeek.length} ${t('statistics.daysPerWeek')}`
+      : t('statistics.everday'))
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].secondary }]}>
       <View style={styles.header}>

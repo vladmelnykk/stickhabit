@@ -9,6 +9,7 @@ import { confirm } from '@/utils/alert'
 import { backupDatabase, restoreDatabase } from '@/utils/db'
 import { router } from 'expo-router'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
@@ -17,7 +18,7 @@ const Page = () => {
   const insets = useSafeAreaInsets()
   const setHabits = useStore(state => state.setHabits)
   const { db, sqlite, refreshDatabase } = useDatabase()
-
+  const { t } = useTranslation()
   const deleteAllData = async () => {
     const onConfirm = async () => {
       try {
@@ -25,23 +26,24 @@ const Page = () => {
         setHabits([])
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: `Successfully deleted all data`
+          text1: t('toast.success'),
+          text2: t('settings.dataManagement.toast.clear.success')
         })
         router.replace('/settings')
       } catch {
         Toast.show({
           type: 'error',
-          text1: 'Something went wrong',
-          text2: `Failed to delete all data`
+          text1: t('toast.error'),
+          text2: t('settings.dataManagement.toast.clear.error')
         })
       }
     }
 
     confirm(
-      'Delete All Data',
-      'Are you sure you want to delete all data? This action cannot be undone.',
-      'Delete',
+      t('settings.dataManagement.clear'),
+      t('settings.dataManagement.toast.clear.confirm'),
+      t('settings.dataManagement.toast.clear.confirmClear'),
+      t('toast.cancel'),
       onConfirm
     )
   }
@@ -52,8 +54,8 @@ const Page = () => {
     } catch {
       Toast.show({
         type: 'error',
-        text1: 'Something went wrong',
-        text2: `Failed to export data`
+        text1: t('toast.error'),
+        text2: t('settings.dataManagement.toast.export.error')
       })
     }
   }
@@ -65,8 +67,8 @@ const Page = () => {
       if (!isSqlite) {
         Toast.show({
           type: 'error',
-          text1: 'Invalid file',
-          text2: `Please select a valid SQLite file`
+          text1: t('toast.error'),
+          text2: t('settings.dataManagement.toast.import.invalidFile')
         })
         return
       }
@@ -74,30 +76,34 @@ const Page = () => {
       await refreshDatabase()
       Toast.show({
         type: 'success',
-        text1: 'Success',
-        text2: `Successfully imported data`
+        text1: t('toast.success'),
+        text2: t('settings.dataManagement.toast.import.success')
       })
     } catch (err) {
       console.log(err)
       Toast.show({
         type: 'error',
-        text1: 'Something went wrong',
-        text2: `Failed to import data`
+        text1: t('toast.error'),
+        text2: t('settings.dataManagement.toast.import.error')
       })
     }
   }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <Header title="Data Management" leftIcon="arrow-left" onLeftPress={() => router.back()} />
+      <Header
+        title={t('settings.dataManagement.title')}
+        leftIcon="arrow-left"
+        onLeftPress={() => router.back()}
+      />
 
       <View style={styles.buttonContainer}>
-        <ThemedButton title="Export" primary onPress={exportData} />
+        <ThemedButton title={t('settings.dataManagement.export')} primary onPress={exportData} />
 
-        <ThemedButton title="Import" primary onPress={importData} />
+        <ThemedButton title={t('settings.dataManagement.import')} primary onPress={importData} />
 
         <ThemedButton
-          title="Delete All"
+          title={t('settings.dataManagement.clear')}
           primary
           onPress={deleteAllData}
           style={{ backgroundColor: DANGER_COLOR }}

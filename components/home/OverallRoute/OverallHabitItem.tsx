@@ -6,17 +6,11 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import { Habit } from '@/types/types'
 import { differenceInDays, startOfISOWeek, subWeeks } from 'date-fns'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
-const DAYS_OF_WEEK = [
-  { id: 1, label: 'M' },
-  { id: 2, label: 'T' },
-  { id: 3, label: 'W' },
-  { id: 4, label: 'T' },
-  { id: 5, label: 'F' },
-  { id: 6, label: 'S' },
-  { id: 0, label: 'S' }
-]
+// 0 - Sun, 1 - Mon, 2 - Tue, 3 - Wed, 4 - Thu, 5 - Fri, 6 - Sat
+const DAYS_OF_WEEK = [1, 2, 3, 4, 5, 6, 0] as const
 
 const CIRCLE_SIZE = (WINDOW_WIDTH - CONTAINER_PADDING * 2 - 16) / 22
 
@@ -62,14 +56,14 @@ const getGridData = (habit: Habit) => {
 const OverallHabitItem: React.FC<OverallHabitItemProps> = ({ habit }) => {
   const monthlyData = getGridData(habit)
   const theme = useColorScheme()
-
+  const { t } = useTranslation()
   return (
     <HabitOverviewCard habit={habit}>
       <View style={styles.colContainer}>
         {DAYS_OF_WEEK.map(day => {
           return (
-            <Text style={[styles.label, { color: Colors[theme].text }]} key={day.id}>
-              {day.label}
+            <Text style={[styles.label, { color: Colors[theme].text }]} key={day}>
+              {t(`days.oneLetter.${day}`)}
             </Text>
           )
         })}

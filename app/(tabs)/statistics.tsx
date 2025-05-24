@@ -11,20 +11,27 @@ import {
 } from '@/utils/statistics'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const Page = () => {
   const insets = useSafeAreaInsets()
   const tabBarHeight = useBottomTabBarHeight()
+  const { t } = useTranslation()
 
   const habits = useStore(state => state.habits)
 
   const statistics = useMemo(() => calculateStatistics(habits), [habits])
 
+  const chartRange = ChartRange.map((label, index) => ({
+    value: index,
+    label: t(`chartRange.${label}`)
+  }))
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <Header title="Statistics" showLogo />
+      <Header title={t('statistics.title')} showLogo />
 
       <ScrollView
         style={[styles.scrollView]}
@@ -33,13 +40,13 @@ const Page = () => {
       >
         <StatisticsPanel {...statistics} />
         <ChartWithRangePicker
-          title="Habits Completed"
-          range={ChartRange}
+          title={t('statistics.habitsCompleted')}
+          range={chartRange}
           buildChartData={calculateCompletedHabitsForChart}
         />
         <ChartWithRangePicker
-          title="Habits Completion Rate"
-          range={ChartRange}
+          title={t('statistics.completionRate')}
+          range={chartRange}
           chartType="line"
           buildChartData={calculateCompletionRateForChart}
         />

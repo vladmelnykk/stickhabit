@@ -16,21 +16,16 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite'
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
 import { router, SplashScreen } from 'expo-router'
 import React, { useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Route, SceneRendererProps } from 'react-native-tab-view'
 
-const routes = [
-  { key: 'today', title: 'Today' },
-  { key: 'weekly', title: 'Weekly' },
-  { key: 'overall', title: 'Overall' }
-]
-
 export default function Home() {
   const tabBarHeight = useBottomTabBarHeight()
   const insets = useSafeAreaInsets()
-
+  const { t } = useTranslation()
   const routesRef = React.useRef<{ [key: string]: FlatList | ScrollView | null }>({})
 
   const setHabits = useStore(state => state.setHabits)
@@ -52,7 +47,7 @@ export default function Home() {
   const [progress, setProgress] = React.useState<number>(0)
 
   const handleCreateHabitPress = () => {
-    router.push('/habit/add')
+    router.navigate('/habit/add')
   }
   const handleTabPress = (routeKey: string) => {
     const ref = routesRef.current[routeKey]
@@ -79,6 +74,12 @@ export default function Home() {
     }
   }, [data, setHabits])
 
+  const routes = [
+    { key: 'today', title: t('home.today') },
+    { key: 'weekly', title: t('home.weekly') },
+    { key: 'overall', title: t('home.overall') }
+  ]
+
   const renderScene = ({ route }: SceneRendererProps & { route: Route }) => {
     switch (route.key) {
       case 'today':
@@ -95,7 +96,7 @@ export default function Home() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Animated.View style={styles.verticalOffset} entering={FadeInUp}>
-        <Header title="Home" showLogo />
+        <Header title={t('home.title')} showLogo />
       </Animated.View>
       <Animated.View style={styles.verticalOffset} entering={FadeInDown}>
         <ProgressBar progress={progress} />

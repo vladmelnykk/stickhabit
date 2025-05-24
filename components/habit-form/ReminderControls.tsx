@@ -5,6 +5,7 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import { registerForPushNotificationsAsync } from '@/utils/notification'
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Platform, StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import Icon from '../ui/Icon'
@@ -25,7 +26,7 @@ const ReminderControls: React.FC<ReminderControlsProps> = ({
   setIsReminderEnabled
 }) => {
   const theme = useColorScheme()
-
+  const { t } = useTranslation()
   const [showIosDatePicker, setShowIosDatePicker] = useState(false)
 
   const addReminder = (date: Date) => {
@@ -49,8 +50,8 @@ const ReminderControls: React.FC<ReminderControlsProps> = ({
     } else {
       Toast.show({
         type: 'error',
-        text1: 'Oops!',
-        text2: 'Reminder already exists'
+        text1: t('toast.oops'),
+        text2: t('habit.toast.reminder.duplicate')
       })
     }
   }
@@ -68,8 +69,8 @@ const ReminderControls: React.FC<ReminderControlsProps> = ({
     if (reminders.length >= MAX_REMINDERS) {
       Toast.show({
         type: 'error',
-        text1: 'Oops!',
-        text2: `You can only add up to ${MAX_REMINDERS} reminders`
+        text1: t('toast.oops'),
+        text2: t('habit.toast.reminder.limit', { limit: MAX_REMINDERS })
       })
       return
     }
@@ -79,8 +80,8 @@ const ReminderControls: React.FC<ReminderControlsProps> = ({
     if (!isNotificationsEnabled) {
       Toast.show({
         type: 'error',
-        text1: 'Oops!',
-        text2: 'Notifications are not enabled'
+        text1: t('toast.oops'),
+        text2: t('habit.toast.reminder.notifications')
       })
       return
     }
@@ -117,7 +118,7 @@ const ReminderControls: React.FC<ReminderControlsProps> = ({
     <>
       {Platform.OS === 'ios' && showIosDatePicker ? null : (
         <View style={styles.rowContainer}>
-          <ThemedText type="subtitle">Set Reminder</ThemedText>
+          <ThemedText type="subtitle">{t('habit.setReminders')}</ThemedText>
           <Switch
             value={isReminderEnabled}
             trackColor={{ true: Colors[theme].tint }}
@@ -139,7 +140,7 @@ const ReminderControls: React.FC<ReminderControlsProps> = ({
               }
               style={[styles.addReminderText]}
             >
-              Add new reminder
+              {t('habit.addReminder')}
             </ThemedText>
             <Icon
               name="plus-circle"

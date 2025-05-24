@@ -21,6 +21,33 @@ interface BarChartProps {
 const BarChart: React.FC<BarChartProps> = ({ data, maxValue, onPress }) => {
   const theme = useColorScheme()
 
+  const renderTooltip = (item: barDataItem, index: number) => {
+    return (
+      <View
+        style={[
+          styles.tooltip,
+          { borderColor: Colors[theme].tint, backgroundColor: Colors[theme].background }
+        ]}
+      >
+        <Text
+          adjustsFontSizeToFit
+          numberOfLines={1}
+          style={[styles.tooltipText, { color: Colors[theme].text }]}
+        >
+          {item.value}
+        </Text>
+        <Text
+          adjustsFontSizeToFit
+          numberOfLines={1}
+          style={[styles.tooltipText, { color: Colors[theme].text }]}
+        >
+          habits
+        </Text>
+        <View style={[styles.tooltipArrow, { borderTopColor: Colors[theme].tint }]} />
+      </View>
+    )
+  }
+
   return (
     <BarChartRNGC
       data={data}
@@ -47,69 +74,41 @@ const BarChart: React.FC<BarChartProps> = ({ data, maxValue, onPress }) => {
       roundedTop
       formatYLabel={(value: string) => String(Number(value))}
       yAxisTextStyle={{ color: Colors[theme].text }}
-      xAxisLabelTextStyle={{ color: Colors[theme].text }}
-      renderTooltip={(item: barDataItem, index: number) => {
-        return (
-          <View
-            style={{
-              marginBottom: 5,
-              backgroundColor: Colors[theme].background,
-              padding: 6,
-              borderRadius: 48,
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: TOOLTIP_WIDTH,
-              height: TOOLTIP_WIDTH,
-              borderWidth: 4,
-              borderColor: Colors[theme].tint,
-              left: '-50%',
-              transform: [{ translateX: BAR_WIDTH / 2 }],
-              zIndex: 100
-            }}
-          >
-            <Text
-              adjustsFontSizeToFit
-              numberOfLines={1}
-              style={{
-                color: Colors[theme].text,
-                fontFamily: FontFamily.RobotoRegular,
-                textAlign: 'center'
-              }}
-            >
-              {item.value}
-            </Text>
-            <Text
-              adjustsFontSizeToFit
-              numberOfLines={1}
-              style={{
-                color: Colors[theme].text,
-                fontFamily: FontFamily.RobotoRegular,
-                textAlign: 'center'
-              }}
-            >
-              habits
-            </Text>
-            <View
-              style={{
-                zIndex: 100,
-                position: 'absolute',
-                bottom: -10,
-                borderLeftWidth: 6,
-                borderRightWidth: 6,
-                borderTopWidth: 8,
-                borderStyle: 'solid',
-                borderLeftColor: 'transparent',
-                borderRightColor: 'transparent',
-                borderTopColor: Colors[theme].tint
-              }}
-            />
-          </View>
-        )
-      }}
+      xAxisLabelTextStyle={{ color: Colors[theme].text, textTransform: 'capitalize', fontSize: 13 }}
+      renderTooltip={renderTooltip}
     />
   )
 }
 
 export default BarChart
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  tooltip: {
+    marginBottom: 5,
+    padding: 6,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: TOOLTIP_WIDTH,
+    height: TOOLTIP_WIDTH,
+    borderWidth: 4,
+    left: '-50%',
+    transform: [{ translateX: BAR_WIDTH / 2 }],
+    zIndex: 100
+  },
+  tooltipText: {
+    fontFamily: FontFamily.RobotoRegular,
+    textAlign: 'center'
+  },
+  tooltipArrow: {
+    zIndex: 100,
+    position: 'absolute',
+    bottom: -10,
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderTopWidth: 8,
+    borderStyle: 'solid',
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent'
+  }
+})

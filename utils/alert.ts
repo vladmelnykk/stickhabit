@@ -4,11 +4,12 @@ export function confirm(
   title: string,
   message: string,
   confirmText: string,
+  cancelText: string,
   onConfirm: () => Promise<void>
 ) {
   Alert.alert(title, message, [
     {
-      text: 'Cancel',
+      text: cancelText,
       style: 'cancel'
     },
     {

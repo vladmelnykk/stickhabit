@@ -1,4 +1,5 @@
 import BottomSheet from '@/components/bottomSheet/BottomSheet'
+import BottomSheetHeader from '@/components/bottomSheet/BottomSheetHeader'
 import Header from '@/components/common/Header'
 import ColorList from '@/components/habit-form/ColorList'
 import ReminderControls from '@/components/habit-form/ReminderControls'
@@ -18,6 +19,7 @@ import { createHabit } from '@/utils/habit'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { router } from 'expo-router'
 import React, { lazy, Suspense, useCallback, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StatusBar, StyleSheet, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import Animated, { FadeInUp } from 'react-native-reanimated'
@@ -30,6 +32,7 @@ const DAYS = 7
 const Page = () => {
   const habits = useStore(state => state.habits)
   const theme = useColorScheme()
+  const { t } = useTranslation()
   const { db } = useDatabase()
   const insets = useSafeAreaInsets()
   const bottomSheetRef = useRef<BottomSheetMethods>(null)
@@ -63,17 +66,21 @@ const Page = () => {
     const goal = Number(goalValue.current) || 0
 
     const validationError = !habitName
-      ? 'Please enter a habit name'
+      ? t('habit.toast.validation.name')
       : goal <= 0 || isNaN(goal)
-      ? 'Please enter a valid goal'
+      ? t('habit.toast.validation.goal')
       : !color
-      ? 'Please select a color'
+      ? t('habit.toast.validation.color')
       : !selectedDays.includes(true)
-      ? 'Please select at least one day'
+      ? t('habit.toast.validation.days')
       : null
 
     if (validationError) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: validationError })
+      Toast.show({
+        type: 'error',
+        text1: t('habit.toast.validation.error'),
+        text2: validationError
+      })
       return
     }
 
@@ -100,13 +107,17 @@ const Page = () => {
     try {
       await createHabit(db, habitData, isReminderEnabled ? reminders : [])
 
-      Toast.show({ type: 'success', text1: 'Success', text2: 'Habit saved successfully!' })
+      Toast.show({
+        type: 'success',
+        text1: t('toast.success'),
+        text2: t('habit.toast.create.success')
+      })
       router.back()
     } catch {
       Toast.show({
         type: 'error',
-        text1: 'Something went wrong',
-        text2: `Failed to save habit`
+        text1: t('toast.somethingWentWrong'),
+        text2: t('habit.toast.create.error')
       })
     }
   }
@@ -127,20 +138,20 @@ const Page = () => {
         showsVerticalScrollIndicator={false}
       >
         <Animated.View style={styles.sectionContainer} entering={FadeInUp}>
-          <ThemedText type="subtitle">Habit Name</ThemedText>
-          <Input placeholder="Habit Name" onChangeText={text => (nameValue.current = text)} />
+          <ThemedText type="subtitle">{t('habit.name')}</ThemedText>
+          <Input placeholder={t('habit.name')} onChangeText={text => (nameValue.current = text)} />
         </Animated.View>
 
         <Animated.View style={styles.sectionContainer} entering={FadeInUp}>
-          <ThemedText type="subtitle">How many times a day?</ThemedText>
+          <ThemedText type="subtitle">{t('habit.goal')}</ThemedText>
           <Input
-            placeholder="Your Goal"
+            placeholder={t('habit.goalPlaceholder')}
             keyboardType="number-pad"
             onChangeText={text => (goalValue.current = text)}
           />
         </Animated.View>
 
-        <ThemedText type="subtitle">Color</ThemedText>
+        <ThemedText type="subtitle">{t('habit.color')}</ThemedText>
 
         <View>
           <ColorList
@@ -157,9 +168,9 @@ const Page = () => {
         </View>
 
         <View style={styles.rowContainer}>
-          <ThemedText type="subtitle">Days</ThemedText>
+          <ThemedText type="subtitle">{t('habit.days')}</ThemedText>
           <View style={styles.rowContainer}>
-            <ThemedText>All day</ThemedText>
+            <ThemedText>{t('habit.add.allDay')}</ThemedText>
             <Checkbox value={isAllDaysSelected} onValueChange={handleCheckboxChange} />
           </View>
         </View>
@@ -172,11 +183,12 @@ const Page = () => {
           setReminders={setReminders}
         />
 
-        <ThemedButton title="Create" primary onPress={handleSave} />
+        <ThemedButton title={t('habit.add.create')} primary onPress={handleSave} />
       </ScrollView>
 
       <Suspense fallback={null}>
         <BottomSheet ref={bottomSheetRef}>
+          <BottomSheetHeader title={t('bottomSheet.title.color')} />
           <ColorPicker onPickColor={handleColorSelect} />
         </BottomSheet>
       </Suspense>

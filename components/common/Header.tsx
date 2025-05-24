@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   title: {
     position: 'absolute',
-    left: ICON_CONTAINER_SIZE,
+    left: ICON_CONTAINER_SIZE + 8,
     right: ICON_CONTAINER_SIZE,
     textAlign: 'center'
   },

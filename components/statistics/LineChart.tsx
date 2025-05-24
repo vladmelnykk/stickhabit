@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     marginLeft: -5
   },
   xAxisText: {
-    fontSize: 13
+    fontSize: 13,
+    textTransform: 'capitalize'
   }
 })

@@ -1,0 +1,176 @@
+{
+  "home": {
+    "title": "Home",
+    "today": "Today",
+    "weekly": "Weekly",
+    "overall": "Overall",
+    "progress": "Progress",
+    "uncompleted": "Uncompleted",
+    "completed": "Completed",
+    "noUncompleted": "You have no uncompleted habits",
+    "toast": {
+      "today": {
+        "success": "You have completed {{title}}",
+        "error": "You have already completed this habit today"
+      }
+    }
+  },
+  "statistics": {
+    "title": "Statistics",
+    "currentStreak": "Current Streak",
+    "habitsCompleted": "Habits Completed",
+    "completionRate": "Completion Rate",
+    "totalPerfectDays": "Total Perfect Days",
+    "everday": "Everyday",
+    "daysPerWeek": "days per week"
+  },
+  "habits": {
+    "title": "My Habits"
+  },
+  "habit": {
+    "title": "Habit",
+    "days": "Days",
+    "calendarStatistics": "Calendar Statistics",
+    "name": "Habit Name",
+    "goal": "How many times per day?",
+    "goalPlaceholder": "Your goal",
+    "color": "Color",
+    "setReminders": "Set Reminders",
+    "addReminder": "Add new reminder",
+    "edit": {
+      "title": "Edit Habit",
+      "save": "Save",
+      "reset": "Reset",
+      "archive": "Delete Habit & Keep History",
+      "delete": "Delete Habit & Clear History"
+    },
+    "add": {
+      "title": "Create Habit",
+      "create": "Create",
+      "allDay": "All Day"
+    },
+    "toast": {
+      "reminder": {
+        "duplicate": "Reminder already exists",
+        "limit": "You can only add up to {{limit}} reminders",
+        "notifications": "Notifications are not enabled"
+      },
+      "archive": {
+        "success": "Successfully archived {{title}}",
+        "error": "Failed to archive habit",
+        "confirm": "Are you sure you want to archive this habit? This action cannot be undone.",
+        "confirmArchive": "Archive"
+      },
+      "delete": {
+        "success": "Successfully deleted {{title}}",
+        "error": "Failed to delete habit",
+        "confirm": "Are you sure you want to delete this habit? This action cannot be undone.",
+        "confirmDelete": "Delete"
+      },
+      "validation": {
+        "error": "Validation Error",
+        "name": "Please enter a habit name",
+        "color": "Please select a color",
+        "days": "Please select at least one day",
+        "goal": "Please enter a valid goal"
+      },
+      "update": {
+        "success": "Successfully updated {{title}}",
+        "error": "Failed to update habit"
+      },
+      "create": {
+        "success": "Habit saved successfully!",
+        "error": "Failed to create habit"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "language": "Language"
+    },
+    "dataManagement": {
+      "title": "Data Management",
+      "export": "Export Data",
+      "import": "Import Data",
+      "clear": "Clear Data",
+      "toast": {
+        "export": {
+          "error": "Error exporting data"
+        },
+        "import": {
+          "success": "Data imported successfully",
+          "error": "Error importing data",
+          "invalidFile": "Invalid file format"
+        },
+        "clear": {
+          "success": "Data cleared successfully",
+          "error": "Error clearing data",
+          "confirm": "Are you sure you want to clear all data? This action cannot be undone.",
+          "confirmClear": "Clear"
+        }
+      }
+    },
+    "info": {
+      "title": "Info",
+      "version": "Version",
+      "contact": "Contact"
+    }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "en": "English",
+    "uk": "Ukrainian"
+  },
+  "days": {
+    "oneLetter": {
+      "0": "S",
+      "1": "M",
+      "2": "T",
+      "3": "W",
+      "4": "T",
+      "5": "F",
+      "6": "S"
+    },
+    "short": {
+      "0": "Sun",
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
+    }
+  },
+  "chartRange": {
+    "thisWeek": "This week",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "last6Months": "Last 6 months",
+    "thisYear": "This year",
+    "lastYear": "Last year",
+    "allTime": "All time"
+  },
+  "bottomSheet": {
+    "title": {
+      "theme": "Select Theme",
+      "language": "Select Language",
+      "color": "Select Color",
+      "delete": "Delete this Habit?"
+    }
+  },
+  "toast": {
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "oops": "Oops!",
+    "somethingWentWrong": "Something went wrong"
+  }
+}

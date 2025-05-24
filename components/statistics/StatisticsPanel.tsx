@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import { ThemedText } from '../ui/ThemedText'
 
@@ -22,7 +23,7 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
   frequency
 }) => {
   const theme = useColorScheme()
-
+  const { t } = useTranslation()
   return (
     <View style={styles.colContainer}>
       {title && (
@@ -40,25 +41,23 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
         </View>
       )}
       <View style={styles.rowContainer}>
-        <View style={styles.colContainer}>
-          <View style={[styles.infoPanel, { backgroundColor: Colors[theme].secondary }]}>
-            <ThemedText type="subtitle">{currentStreak}</ThemedText>
-            <ThemedText type="default">Current streak</ThemedText>
-          </View>
-          <View style={[styles.infoPanel, , { backgroundColor: Colors[theme].secondary }]}>
-            <ThemedText type="subtitle">{habitsCompleted}</ThemedText>
-            <ThemedText type="default">Habits completed</ThemedText>
-          </View>
+        <View style={[styles.infoPanel, { backgroundColor: Colors[theme].secondary }]}>
+          <ThemedText type="subtitle">{currentStreak}</ThemedText>
+          <ThemedText type="default">{t('statistics.currentStreak')}</ThemedText>
         </View>
-        <View style={styles.colContainer}>
-          <View style={[styles.infoPanel, , { backgroundColor: Colors[theme].secondary }]}>
-            <ThemedText type="subtitle">{completionRate.toFixed(0)}%</ThemedText>
-            <ThemedText type="default">Completion rate</ThemedText>
-          </View>
-          <View style={[styles.infoPanel, , { backgroundColor: Colors[theme].secondary }]}>
-            <ThemedText type="subtitle">{totalPerfectDays}</ThemedText>
-            <ThemedText type="default">Total perfect days</ThemedText>
-          </View>
+        <View style={[styles.infoPanel, , { backgroundColor: Colors[theme].secondary }]}>
+          <ThemedText type="subtitle">{habitsCompleted}</ThemedText>
+          <ThemedText type="default">{t('statistics.habitsCompleted')}</ThemedText>
+        </View>
+      </View>
+      <View style={styles.rowContainer}>
+        <View style={[styles.infoPanel, , { backgroundColor: Colors[theme].secondary }]}>
+          <ThemedText type="subtitle">{completionRate.toFixed(0)}%</ThemedText>
+          <ThemedText type="default">{t('statistics.completionRate')}</ThemedText>
+        </View>
+        <View style={[styles.infoPanel, , { backgroundColor: Colors[theme].secondary }]}>
+          <ThemedText type="subtitle">{totalPerfectDays}</ThemedText>
+          <ThemedText type="default">{t('statistics.totalPerfectDays')}</ThemedText>
         </View>
       </View>
     </View>
@@ -78,7 +77,8 @@ const styles = StyleSheet.create({
     gap: 12
   },
   infoPanel: {
-    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
     minHeight: 75,
     paddingVertical: 12,
     paddingHorizontal: 8,

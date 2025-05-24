@@ -65,6 +65,7 @@ async function refreshHabitNotifications({
   await cancelAllHabitNotifications(notificationIdsToCancel)
 
   for (const reminder of reminders) {
+    // TODO: localize notification
     const ids = await scheduleHabitNotification(
       `Time for «${title}»`,
       'Stay consistent with your habit!',

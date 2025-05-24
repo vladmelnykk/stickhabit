@@ -1,10 +1,10 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import Icon from '../ui/Icon'
 import { ThemedText } from '../ui/ThemedText'
-import BottomSheetHeader from './BottomSheetHeader'
 
 const KEEP_COLOR = '#FF981F'
 const CLEAR_COLOR = '#F85757'
@@ -16,10 +16,9 @@ interface DeleteHabitProps {
 
 const DeleteHabit: React.FC<DeleteHabitProps> = ({ onDeleteAndKeep, onDeleteAndClear }) => {
   const theme = useColorScheme()
-
+  const { t } = useTranslation()
   return (
     <View style={styles.container}>
-      <BottomSheetHeader title="Delete this Habit?" titleStyle={styles.dangerText} />
       <Pressable
         onPress={onDeleteAndKeep}
         style={[
@@ -28,7 +27,7 @@ const DeleteHabit: React.FC<DeleteHabitProps> = ({ onDeleteAndKeep, onDeleteAndC
         ]}
       >
         <Icon name="archive" color={KEEP_COLOR} />
-        <ThemedText>Delete Habit & Keep History</ThemedText>
+        <ThemedText>{t('habit.edit.archive')}</ThemedText>
       </Pressable>
       <Pressable
         onPress={onDeleteAndClear}
@@ -38,7 +37,7 @@ const DeleteHabit: React.FC<DeleteHabitProps> = ({ onDeleteAndKeep, onDeleteAndC
         ]}
       >
         <Icon name="trash-2" color={CLEAR_COLOR} />
-        <ThemedText>Delete Habit & Clear History</ThemedText>
+        <ThemedText>{t('habit.edit.delete')}</ThemedText>
       </Pressable>
     </View>
   )

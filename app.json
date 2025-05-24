@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "stickhabit",
+    "name": "StickHabit",
     "slug": "stickhabit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vladmelnykk.stickhabit"
@@ -52,18 +52,24 @@
           ]
         }
       ],
-      // TODO: add picker support
       [
         "@react-native-community/datetimepicker",
         {
           "android": {
             "timePicker": {
-              "background": { "light": "#FF5722", "dark": "#383838" },
-              "numbersBackgroundColor": { "light": "#FF5722", "dark": "#383838" }
+              "background": {
+                "light": "#FF5722",
+                "dark": "#383838"
+              },
+              "numbersBackgroundColor": {
+                "light": "#FF5722",
+                "dark": "#383838"
+              }
             }
           }
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

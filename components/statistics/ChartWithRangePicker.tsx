@@ -8,7 +8,9 @@ import { barDataItem, lineDataItem } from 'react-native-gifted-charts'
 import Dropdown from '../common/Dropdown'
 import { ThemedText } from '../ui/ThemedText'
 
+import { Language } from '@/constants/Language'
 import { Habit } from '@/types/types'
+import { useTranslation } from 'react-i18next'
 import BarChart from './BarChart'
 import LineChart from './LineChart'
 export interface Range {
@@ -22,7 +24,8 @@ interface ChartWithRangePickerProps {
   chartType?: 'bar' | 'line'
   buildChartData: (
     habits: Habit[],
-    selectedRangeIndex: number
+    selectedRangeIndex: number,
+    lng: Language
   ) => { data: barDataItem[] | lineDataItem[]; maxValue: number }
 }
 
@@ -34,9 +37,11 @@ const ChartWithRangePicker: React.FC<ChartWithRangePickerProps> = ({
 }) => {
   const theme = useColorScheme()
   const habits = useStore(state => state.habits)
+  const { i18n } = useTranslation()
   const [selectedRangeIndex, setSelectedRangeIndex] = React.useState<number>(0)
   const [selectedBarIndex, setSelectedBarIndex] = React.useState<number>(-1)
 
+  // TODO: Does it need to be here?
   const onBarPress = useCallback(
     (item: any, index: number) => {
       setSelectedBarIndex(selectedBarIndex === index ? -1 : index)
@@ -45,8 +50,8 @@ const ChartWithRangePicker: React.FC<ChartWithRangePickerProps> = ({
   )
 
   const { data, maxValue } = useMemo(
-    () => buildChartData(habits, selectedRangeIndex),
-    [habits, selectedRangeIndex, buildChartData]
+    () => buildChartData(habits, selectedRangeIndex, i18n.language as Language),
+    [habits, selectedRangeIndex, buildChartData, i18n.language]
   )
 
   return (
@@ -61,7 +66,6 @@ const ChartWithRangePicker: React.FC<ChartWithRangePickerProps> = ({
           options={range}
           selectedIndex={selectedRangeIndex}
           onSelect={value => {
-            if (value !== selectedRangeIndex) setSelectedBarIndex(-1)
             setSelectedRangeIndex(value)
           }}
         />
