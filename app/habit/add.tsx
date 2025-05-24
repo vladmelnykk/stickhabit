@@ -130,7 +130,7 @@ const Page = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar backgroundColor={Colors[theme].background} />
-      <Header title="Create Habit" leftIcon="x" onLeftPress={handleLeftIconPress} />
+      <Header title={t('habit.add.title')} leftIcon="x" onLeftPress={handleLeftIconPress} />
       <ScrollView
         automaticallyAdjustKeyboardInsets
         style={styles.scrollView}

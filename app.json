@@ -58,12 +58,24 @@
           "android": {
             "timePicker": {
               "background": {
-                "light": "#FF5722",
-                "dark": "#383838"
+                "light": "#fff",
+                "dark": "#9e9e9e"
               },
               "numbersBackgroundColor": {
-                "light": "#FF5722",
-                "dark": "#383838"
+                "light": "#e0e0e0",
+                "dark": "#363840"
+              },
+              "headerBackground": {
+                "light": "#8a85ea",
+                "dark": "#8a85ea"
+              },
+              "numbersSelectorColor": {
+                "light": "#8a85ea",
+                "dark": "#8a85ea"
+              },
+              "numbersTextColor": {
+                "light": "#11181C",
+                "dark": "#fff"
               }
             }
           }
