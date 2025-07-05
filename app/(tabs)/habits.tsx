@@ -94,24 +94,23 @@ const Page = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar backgroundColor={Colors[theme].background} />
-      <Animated.View entering={FadeInUp}>
+      <Animated.View style={{ paddingHorizontal: CONTAINER_PADDING }} entering={FadeInUp}>
         <Header title={t('habits.title')} showLogo />
       </Animated.View>
-      <View style={styles.draggableContainer}>
-        <ReorderableList
-          keyExtractor={(item, index) => 'draggable-' + item.id}
-          data={filterHabits}
-          renderItem={renderItem}
-          cellAnimations={{ opacity: 1 }}
-          showsVerticalScrollIndicator={false}
-          onReorder={onReorder}
-          style={styles.draggableContainer}
-          contentContainerStyle={{
-            paddingTop: 20,
-            paddingBottom: tabBarHeight + 10
-          }}
-        />
-      </View>
+      <ReorderableList
+        keyExtractor={item => 'draggable-' + item.id}
+        data={filterHabits}
+        renderItem={renderItem}
+        cellAnimations={{ opacity: 1 }}
+        showsVerticalScrollIndicator={false}
+        onReorder={onReorder}
+        style={styles.draggableContainer}
+        contentContainerStyle={{
+          paddingTop: CONTAINER_PADDING,
+          paddingBottom: tabBarHeight + 10,
+          paddingHorizontal: CONTAINER_PADDING
+        }}
+      />
     </View>
   )
 }
@@ -121,12 +120,10 @@ export default Page
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 18,
-    paddingHorizontal: CONTAINER_PADDING
+    gap: 8
   },
   draggableContainer: {
-    flex: 1,
-    overflow: 'visible'
+    flex: 1
   },
   listItem: {
     width: '100%',
