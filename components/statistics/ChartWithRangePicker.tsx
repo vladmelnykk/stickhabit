@@ -63,13 +63,12 @@ const ChartWithRangePicker: React.FC<ChartWithRangePickerProps> = ({
       </View>
       <View style={[styles.line, { backgroundColor: Colors[theme].textSecondary }]} />
       <View>
-        {/* TODO: fix Layout.animation configuration isAnimated  */}
         {chartType === 'bar' ? (
           <BarChart data={data} maxValue={maxValue} />
         ) : (
           <LineChart data={data} />
         )}
-        {/* TODO: fix LineChart bug with dropdown [newArchitecture]  */}
+        {/* TODO: fix LineChart bug with dropdown [newArchitecture, IOS, Layout.animation ]  */}
       </View>
     </View>
   )

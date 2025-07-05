@@ -32,7 +32,6 @@ const Page = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header title={t('statistics.title')} showLogo />
-
       <ScrollView
         style={[styles.scrollView]}
         contentContainerStyle={[styles.scrollContainer, { paddingBottom: tabBarHeight + 20 }]}

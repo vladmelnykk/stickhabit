@@ -363,7 +363,7 @@ function calculateCompletionRateForChart(
     )
 
     Array.from(years)
-      .sort()
+      .sort((a, b) => b - a)
       .forEach(year => {
         const start = new Date(year, 0, 1)
         const end = year === now.getFullYear() ? now : new Date(year, 11, 31)

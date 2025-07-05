@@ -26,8 +26,6 @@ const getGridData = (habit: Habit) => {
   // define start date 17 weeks ago
   const startDate = subWeeks(currentMonday, 17)
 
-  // console.log(differenceInDays(endOfISOWeek(now), startDate))
-
   // Create 18x7 grid
   const grid: boolean[][] = Array.from({ length: 18 }, () => Array(7).fill(false))
 

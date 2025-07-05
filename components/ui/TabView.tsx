@@ -25,18 +25,8 @@ const TabView = ({
         <View style={styles.verticalOffset}>
           <TabBar
             {...props}
-            style={[
-              styles.tabBar,
-              {
-                backgroundColor: Colors[theme].secondary
-              }
-            ]}
-            indicatorStyle={[
-              styles.indicator,
-              {
-                backgroundColor: Colors[theme].tint
-              }
-            ]}
+            style={[styles.tabBar, { backgroundColor: Colors[theme].secondary }]}
+            indicatorStyle={[styles.indicator, { backgroundColor: Colors[theme].tint }]}
             activeColor={Colors[theme].text}
             inactiveColor={Colors[theme].text}
             android_ripple={{ foreground: true }}

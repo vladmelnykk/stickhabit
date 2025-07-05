@@ -4,11 +4,10 @@ import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
 import * as SQLite from 'expo-sqlite'
 
-// TODO: use env variables
-const DATABASE_NAME = 'habits.sqlite'
-
 async function initDatabase() {
-  const sqlite = await SQLite.openDatabaseAsync(DATABASE_NAME, { enableChangeListener: true })
+  const sqlite = await SQLite.openDatabaseAsync(process.env.EXPO_PUBLIC_DATABASE_NAME as string, {
+    enableChangeListener: true
+  })
   const db = drizzle(sqlite)
   return { sqlite, db }
 }

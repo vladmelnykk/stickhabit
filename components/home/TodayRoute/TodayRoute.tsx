@@ -1,4 +1,5 @@
 import { ThemedText } from '@/components/ui/ThemedText'
+import { ThemedView } from '@/components/ui/ThemedView'
 import { useStore } from '@/store/store'
 import { TodayHabit } from '@/types/types'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
@@ -24,10 +25,7 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
   const [todayCompletedHabits, setTodayCompletedHabits] = React.useState<TodayHabit[]>([])
   const renderItem = useCallback(({ item }: { item: TodayHabit }) => {
     return (
-      <Animated.View
-        entering={FadeIn.duration(300)}
-        //  exiting={FadeOut.duration(300)}
-      >
+      <Animated.View entering={FadeIn.duration(300)}>
         <TodayHabitItem habit={item} />
       </Animated.View>
     )
@@ -96,17 +94,19 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
       ref={setListRef(route)}
       style={styles.scrollView}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={[styles.listContainer, { paddingBottom: tabBarHeight * 2 }]}
+      contentContainerStyle={[{ paddingBottom: tabBarHeight * 2 }]}
       overScrollMode="never"
+      stickyHeaderIndices={[0, 2]}
       bounces={false}
     >
-      {/* TODO: temporary remove itemLayoutAnimation cause it doesn't work properly on Android [old architecture] */}
+      <ThemedView>
+        <ThemedText style={styles.headerList} type="subtitle">
+          {t('home.uncompleted')}
+        </ThemedText>
+      </ThemedView>
       <Animated.FlatList
-        // itemLayoutAnimation={LinearTransition}
+        itemLayoutAnimation={LinearTransition}
         scrollEnabled={false}
-        // TODO: add sticky header when there is no completed habits
-        // StickyHeaderComponent={() => <ThemedText type="subtitle">Uncompleted</ThemedText>}
-        ListHeaderComponent={() => <ThemedText type="subtitle">{t('home.uncompleted')}</ThemedText>}
         overScrollMode="never"
         data={todayUncompletedHabits}
         keyExtractor={item => item.id.toString()}
@@ -121,6 +121,13 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
         }
       />
       {todayCompletedHabits.length > 0 && (
+        <ThemedView>
+          <ThemedText style={styles.headerList} type="subtitle">
+            {t('home.completed')}
+          </ThemedText>
+        </ThemedView>
+      )}
+      {todayCompletedHabits.length > 0 && (
         <Animated.View
           entering={FadeIn.duration(300)}
           exiting={FadeOut.duration(300)}
@@ -128,10 +135,7 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
         >
           <Animated.FlatList
             skipEnteringExitingAnimations
-            // itemLayoutAnimation={LinearTransition}
-            ListHeaderComponent={() => (
-              <ThemedText type="subtitle">{t('home.completed')}</ThemedText>
-            )}
+            itemLayoutAnimation={LinearTransition}
             scrollEnabled={false}
             overScrollMode="never"
             data={todayCompletedHabits}
@@ -160,6 +164,9 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     gap: 12
+  },
+  headerList: {
+    marginVertical: 12
   },
   emptyListContainer: {
     flex: 1,

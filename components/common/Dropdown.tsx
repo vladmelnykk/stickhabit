@@ -1,18 +1,18 @@
 import { Colors } from '@/constants/Colors'
-import { WINDOW_HEIGHT, WINDOW_WIDTH } from '@/constants/global'
+import { WINDOW_WIDTH } from '@/constants/global'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import React, { useCallback, useState } from 'react'
 import {
   FlatList,
   Modal,
   Pressable,
-  StatusBar,
   StyleProp,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
   ViewStyle
 } from 'react-native'
+import { useSafeAreaFrame } from 'react-native-safe-area-context'
 import type { Range } from '../statistics/ChartWithRangePicker'
 import Icon from '../ui/Icon'
 import { ThemedText } from '../ui/ThemedText'
@@ -26,8 +26,6 @@ interface Props {
   style?: StyleProp<ViewStyle>
   itemStyle?: StyleProp<ViewStyle>
 }
-
-const statusBarHeight: number = StatusBar.currentHeight || 0
 
 const Dropdown: React.FC<Props> = ({
   options,
@@ -55,6 +53,8 @@ const Dropdown: React.FC<Props> = ({
     measurePosition()
     setOpen(!open)
   }
+  // Use useSafeAreaFrame to get the height of the safe area
+  const frame = useSafeAreaFrame()
 
   const handleSelect = (value: number) => {
     setOpen(false)
@@ -64,8 +64,8 @@ const Dropdown: React.FC<Props> = ({
   const measurePosition = useCallback(() => {
     ref.current?.measureInWindow((x, y, width, height) => {
       setPosition({
-        top: Math.floor(y + statusBarHeight),
-        bottom: Math.floor(y + statusBarHeight + height),
+        top: Math.floor(y),
+        bottom: Math.floor(y + height),
         left: x,
         width,
         height
@@ -87,6 +87,7 @@ const Dropdown: React.FC<Props> = ({
         <ThemedText style={styles.buttonText}>{label || placeholder || 'Select'}</ThemedText>
         <Icon name={open ? 'chevron-up' : 'chevron-down'} size={16} color={Colors[theme].text} />
       </Pressable>
+
       {open && position && (
         <Modal visible={open} transparent onRequestClose={toggleDropdown}>
           <TouchableWithoutFeedback onPress={toggleDropdown}>
@@ -95,26 +96,19 @@ const Dropdown: React.FC<Props> = ({
                 style={[
                   styles.dropdown,
                   {
-                    top: position.top + position.height + 2,
+                    top: position.bottom + 2,
                     right:
                       direction === 'right'
                         ? WINDOW_WIDTH - position.left - position.width
                         : undefined,
                     left: direction === 'left' ? position.left : undefined,
-                    backgroundColor: Colors[theme].background
+                    backgroundColor: Colors[theme].background,
+                    maxHeight: Math.min(frame.height - position.bottom, 200)
                   }
                 ]}
               >
                 <FlatList
-                  style={[
-                    styles.flatList,
-                    {
-                      maxHeight: Math.min(
-                        WINDOW_HEIGHT - position.bottom - statusBarHeight - 20,
-                        200
-                      )
-                    }
-                  ]}
+                  style={[styles.flatList]}
                   data={options}
                   nestedScrollEnabled
                   showsVerticalScrollIndicator={false}

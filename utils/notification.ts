@@ -89,10 +89,6 @@ async function refreshHabitNotifications({
   await cancelAllHabitNotifications(notificationIdsToCancel)
 
   for (const reminder of reminders) {
-    console.log(i18n.language)
-
-    console.log(i18n.t('habit.notifications.body'))
-
     const ids = await scheduleHabitNotification(
       i18n.t('habit.notifications.title', { title }),
       i18n.t('habit.notifications.body'),

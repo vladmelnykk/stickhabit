@@ -20,8 +20,6 @@ export function ThemedText({
   return <Text style={[{ color }, styles[type], style]} {...rest} />
 }
 
-// TODO: fix line height
-
 const styles = StyleSheet.create({
   default: {
     fontFamily: FontFamily.RobotoRegular,

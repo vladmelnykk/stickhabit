@@ -102,7 +102,6 @@ export default function Home() {
         <ProgressBar progress={progress} />
       </Animated.View>
 
-      {/* TODO: RENDER LAZY PLACEHOLDER */}
       <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
         <TabView
           handleTabPress={handleTabPress}
@@ -116,8 +115,7 @@ export default function Home() {
           renderScene={renderScene}
           onIndexChange={setTabBarIndex}
           initialLayout={{ width: WINDOW_WIDTH }}
-          // lazy={true}
-          // renderLazyPlaceholder={() => <ThemedText>Loading...</ThemedText>}
+          lazy={true}
         />
       </Animated.View>
       <RoundPlusButton
