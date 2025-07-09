@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/ui/ThemedText'
 import { ThemedView } from '@/components/ui/ThemedView'
 import { useStore } from '@/store/store'
-import { TodayHabit } from '@/types/types'
+import { TodayHabit } from '@/types/global'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { isToday } from 'date-fns'
 import React, { useCallback } from 'react'

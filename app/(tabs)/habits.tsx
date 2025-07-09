@@ -8,14 +8,14 @@ import { habitSchema } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useDatabase } from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
-import { Habit, Theme } from '@/types/types'
+import { Habit, Theme } from '@/types/global'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { eq } from 'drizzle-orm'
-import { router } from 'expo-router'
+import { Link, router } from 'expo-router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { ListRenderItemInfo, Pressable, StatusBar, StyleSheet, View } from 'react-native'
-import Animated, { FadeInUp } from 'react-native-reanimated'
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 import ReorderableList, {
   ReorderableListReorderEvent,
   useIsActive,
@@ -97,20 +97,30 @@ const Page = () => {
       <Animated.View style={{ paddingHorizontal: CONTAINER_PADDING }} entering={FadeInUp}>
         <Header title={t('habits.title')} showLogo />
       </Animated.View>
-      <ReorderableList
-        keyExtractor={item => 'draggable-' + item.id}
-        data={filterHabits}
-        renderItem={renderItem}
-        cellAnimations={{ opacity: 1 }}
-        showsVerticalScrollIndicator={false}
-        onReorder={onReorder}
-        style={styles.draggableContainer}
-        contentContainerStyle={{
-          paddingTop: CONTAINER_PADDING,
-          paddingBottom: tabBarHeight + 10,
-          paddingHorizontal: CONTAINER_PADDING
-        }}
-      />
+      <Animated.View entering={FadeInDown} style={styles.draggableContainer}>
+        <ReorderableList
+          keyExtractor={item => 'draggable-' + item.id}
+          data={filterHabits}
+          ListEmptyComponent={
+            <View style={styles.emptyListContainer}>
+              <ThemedText type="subtitle">{t('habits.empty')}</ThemedText>
+              <Link href={'/habit/add'}>
+                <ThemedText type="link">{t('habits.emptyCreate')}</ThemedText>
+              </Link>
+            </View>
+          }
+          renderItem={renderItem}
+          cellAnimations={{ opacity: 1 }}
+          showsVerticalScrollIndicator={false}
+          onReorder={onReorder}
+          style={styles.draggableContainer}
+          contentContainerStyle={{
+            paddingTop: CONTAINER_PADDING,
+            paddingBottom: tabBarHeight + 10,
+            paddingHorizontal: CONTAINER_PADDING
+          }}
+        />
+      </Animated.View>
     </View>
   )
 }
@@ -143,5 +153,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: FontFamily.RobotoBold,
     color: '#000'
+  },
+  emptyListContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20
   }
 })

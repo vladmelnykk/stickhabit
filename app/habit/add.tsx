@@ -22,7 +22,6 @@ import React, { lazy, Suspense, useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StatusBar, StyleSheet, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import Animated, { FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 const ColorPicker = lazy(() => import('@/components/bottomSheet/ColorPicker'))
@@ -137,19 +136,19 @@ const Page = () => {
         contentContainerStyle={[styles.scrollContainer]}
         showsVerticalScrollIndicator={false}
       >
-        <Animated.View style={styles.sectionContainer} entering={FadeInUp}>
+        <View style={styles.sectionContainer}>
           <ThemedText type="subtitle">{t('habit.name')}</ThemedText>
           <Input placeholder={t('habit.name')} onChangeText={text => (nameValue.current = text)} />
-        </Animated.View>
+        </View>
 
-        <Animated.View style={styles.sectionContainer} entering={FadeInUp}>
+        <View style={styles.sectionContainer}>
           <ThemedText type="subtitle">{t('habit.goal')}</ThemedText>
           <Input
             placeholder={t('habit.goalPlaceholder')}
             keyboardType="number-pad"
             onChangeText={text => (goalValue.current = text)}
           />
-        </Animated.View>
+        </View>
 
         <ThemedText type="subtitle">{t('habit.color')}</ThemedText>
 

@@ -4,11 +4,13 @@ import { TabBarIcons } from '@/constants/TabBarIcons'
 import { PlatformPressable } from '@react-navigation/elements'
 import { BlurView } from 'expo-blur'
 import { Tabs } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 import { Platform, StyleSheet } from 'react-native'
 
 export const TAB_BAR_HEIGHT = Platform.OS === 'android' ? 60 : null
 
 export default function TabLayout() {
+  const { t } = useTranslation()
   return (
     <Tabs
       screenOptions={({ route, theme }) => {
@@ -50,10 +52,10 @@ export default function TabLayout() {
         }
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home' }} />
-      <Tabs.Screen name="statistics" options={{ title: 'Statistics' }} />
-      <Tabs.Screen name="habits" options={{ title: 'My Habits' }} />
-      <Tabs.Screen name="settings" options={{ title: 'Settings' }} />
+      <Tabs.Screen name="index" options={{ title: t('home.title') }} />
+      <Tabs.Screen name="statistics" options={{ title: t('statistics.title') }} />
+      <Tabs.Screen name="habits" options={{ title: t('habits.title') }} />
+      <Tabs.Screen name="settings" options={{ title: t('settings.title') }} />
     </Tabs>
   )
 }

@@ -25,7 +25,9 @@
     "daysPerWeek": "days per week"
   },
   "habits": {
-    "title": "My Habits"
+    "title": "My Habits",
+    "empty": "You have no habits yet",
+    "emptyCreate": "Create your first habit"
   },
   "habit": {
     "title": "Habit",

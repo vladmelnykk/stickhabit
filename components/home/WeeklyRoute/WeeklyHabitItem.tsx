@@ -1,7 +1,7 @@
 import HabitOverviewCard from '@/components/common/HabitOverviewCard'
 import DayIndicator from '@/components/ui/DayIndicator'
 import { WINDOW_WIDTH } from '@/constants/global'
-import { WeeklyHabit } from '@/types/types'
+import { WeeklyHabit } from '@/types/global'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 

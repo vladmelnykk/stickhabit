@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { Habit } from '@/types/types'
+import { Habit } from '@/types/global'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'

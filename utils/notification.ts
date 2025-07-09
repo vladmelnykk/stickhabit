@@ -1,6 +1,6 @@
 import { habitSchema } from '@/db/schema/habits'
 import i18n from '@/i18n'
-import { Habit } from '@/types/types'
+import { Habit } from '@/types/global'
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import * as Notifications from 'expo-notifications'

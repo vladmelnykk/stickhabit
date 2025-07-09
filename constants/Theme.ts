@@ -1,4 +1,4 @@
-import { Theme } from '@/types/types'
+import { Theme } from '@/types/global'
 
 const THEME_OPTIONS = [
   { label: 'theme.light', value: 'light' },

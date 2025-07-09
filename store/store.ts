@@ -1,5 +1,4 @@
-import { type Language } from '@/constants/Language'
-import { Habit, Theme } from '@/types/types'
+import { Habit, Theme, type Language } from '@/types/global'
 import zustandStorage from '@/utils/zustandStorage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'

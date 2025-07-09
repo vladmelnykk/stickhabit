@@ -97,8 +97,6 @@ export default function Home() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Animated.View style={styles.verticalOffset} entering={FadeInUp}>
         <Header title={t('home.title')} showLogo />
-      </Animated.View>
-      <Animated.View style={styles.verticalOffset} entering={FadeInDown}>
         <ProgressBar progress={progress} />
       </Animated.View>
 

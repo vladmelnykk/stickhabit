@@ -12,7 +12,8 @@ import {
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
+import Animated, { FadeInUp } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const Page = () => {
@@ -30,7 +31,7 @@ const Page = () => {
   }))
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <Animated.View entering={FadeInUp} style={[styles.container, { paddingTop: insets.top }]}>
       <Header title={t('statistics.title')} showLogo />
       <ScrollView
         style={[styles.scrollView]}
@@ -50,7 +51,7 @@ const Page = () => {
           buildChartData={calculateCompletionRateForChart}
         />
       </ScrollView>
-    </View>
+    </Animated.View>
   )
 }
 

@@ -62,7 +62,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, maxValue }) => {
       spacing={SPACING}
       barWidth={BAR_WIDTH}
       // activeOpacity={1}
-      noOfSections={maxValue < 7 ? maxValue : 5}
+      noOfSections={maxValue < 7 ? maxValue + 2 : 5}
       maxValue={maxValue <= 10 ? maxValue + 2 : undefined}
       frontColor={Colors[theme].tint}
       highlightEnabled

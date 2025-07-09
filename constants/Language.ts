@@ -10,5 +10,3 @@ export const LANGUAGES = [
     locale: 'uk-UA'
   }
 ] as const
-
-export type Language = (typeof LANGUAGES)[number]['code']

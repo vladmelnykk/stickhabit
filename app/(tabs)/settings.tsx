@@ -4,7 +4,7 @@ import { ThemedText } from '@/components/ui/ThemedText'
 import { Colors } from '@/constants/Colors'
 import { CONTAINER_PADDING } from '@/constants/global'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import Feather from '@expo/vector-icons/Feather'
+import { type IconName } from '@/types/global'
 import { router } from 'expo-router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface SettingsItem {
   label: string
-  icon: React.ComponentProps<typeof Feather>['name']
+  icon: IconName
   onPress: () => void
 }
 
@@ -26,7 +26,7 @@ const Page = () => {
   const settingsItems: SettingsItem[] = [
     {
       label: t('settings.appearance.title'),
-      icon: 'settings',
+      icon: 'eye',
       onPress: () => {
         router.navigate('/settings/appearance')
       }

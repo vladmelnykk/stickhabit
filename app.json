@@ -48,7 +48,8 @@
             "./assets/fonts/Roboto/Roboto-Thin.ttf",
             "./assets/fonts/Roboto/Roboto-ExtraLight.ttf",
             "./assets/fonts/Roboto/Roboto-ExtraBold.ttf",
-            "./assets/fonts/Roboto/Roboto-Black.ttf"
+            "./assets/fonts/Roboto/Roboto-Black.ttf",
+            "./assets/fonts/feather.ttf"
           ]
         }
       ],

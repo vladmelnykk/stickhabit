@@ -1,8 +1,8 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import { Language } from './constants/Language'
 import en from './locales/en/translation.json'
 import uk from './locales/uk/translation.json'
+import { Language } from './types/global'
 
 export const resources: Record<Language, { translation: typeof en }> = {
   en: { translation: en },

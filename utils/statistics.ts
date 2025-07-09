@@ -1,5 +1,4 @@
-import { Language } from '@/constants/Language'
-import { Habit } from '@/types/types'
+import { Habit, Language } from '@/types/global'
 import {
   addDays,
   eachDayOfInterval,

@@ -1,17 +1,20 @@
-import Feather from '@expo/vector-icons/Feather'
+import iconConfig from '@/assets/fonts/selection.json'
+import { IconName } from '@/types/global'
+import { createIconSetFromIcoMoon } from '@expo/vector-icons'
 import React from 'react'
 import { StyleProp, TextStyle } from 'react-native'
 
 interface IconProps {
-  name: React.ComponentProps<typeof Feather>['name']
+  name: IconName
   size?: number
   color?: string
   style?: StyleProp<TextStyle>
 }
 
-// TODO: create own icon library
+const CustomIcon = createIconSetFromIcoMoon(iconConfig, 'feather', 'feather.ttf')
+
 const Icon = ({ color, size = 24, name, style }: IconProps) => {
-  return <Feather name={name} size={size} color={color} style={style} />
+  return <CustomIcon name={name} size={size} color={color} style={style} />
 }
 
 export default Icon

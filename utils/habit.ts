@@ -1,5 +1,5 @@
 import { habitSchema } from '@/db/schema/habits'
-import { Habit } from '@/types/types'
+import { Habit } from '@/types/global'
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { cancelAllHabitNotifications, refreshHabitNotifications } from './notification'

@@ -1,3 +1,5 @@
+import { LANGUAGES } from '@/constants/Language'
+
 export interface Habit {
   id: number
   title: string
@@ -20,5 +22,31 @@ export interface TodayHabit extends Habit {
 export interface WeeklyHabit extends Habit {
   completedDaysThisWeek: number[]
 }
+export type Language = (typeof LANGUAGES)[number]['code']
 
 export type Theme = 'light' | 'dark' | 'system'
+
+export type IconName =
+  | 'archive'
+  | 'arrow-left'
+  | 'check'
+  | 'chevron-down'
+  | 'chevron-left'
+  | 'chevron-right'
+  | 'chevron-up'
+  | 'clock'
+  | 'database'
+  | 'edit-3'
+  | 'eye'
+  | 'grid'
+  | 'home'
+  | 'info'
+  | 'menu'
+  | 'minus-circle'
+  | 'plus'
+  | 'plus-circle'
+  | 'settings'
+  | 'trash'
+  | 'trash-2'
+  | 'trending-up'
+  | 'x'
