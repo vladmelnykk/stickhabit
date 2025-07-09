@@ -11,7 +11,7 @@ interface IconProps {
   style?: StyleProp<TextStyle>
 }
 
-const CustomIcon = createIconSetFromIcoMoon(iconConfig, 'feather', 'feather.ttf')
+const CustomIcon = createIconSetFromIcoMoon(iconConfig, 'icomoon', 'icomoon.ttf')
 
 const Icon = ({ color, size = 24, name, style }: IconProps) => {
   return <CustomIcon name={name} size={size} color={color} style={style} />
