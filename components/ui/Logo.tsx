@@ -2,7 +2,7 @@ import React from 'react'
 import { Image, StyleSheet } from 'react-native'
 
 const Logo = () => {
-  return <Image style={styles.logo} source={require('../../assets/images/favicon.png')} />
+  return <Image style={styles.logo} source={require('../../assets/icons/adaptive-icon.png')} />
 }
 
 export default Logo
