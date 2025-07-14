@@ -16,9 +16,10 @@ import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: false
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true
   })
 })
 
