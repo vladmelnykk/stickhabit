@@ -21,33 +21,11 @@ export default function TabLayout() {
             const name = TabBarIcons[route.name as keyof typeof TabBarIcons]
             return <Icon color={color} name={name} />
           },
-          // TODO: Animated tab bar label
-
-          // tabBarLabel: ({ color, focused }) => {
-          //   return (
-          //     <Animated.View layout={LinearTransition} style={{ width: focused ? 'auto' : 0 }}>
-          //       <Text style={{ color, width: focused ? 'auto' : 0 }}>{route.name}</Text>
-          //     </Animated.View>
-          //   )
-          // },
-          // tabBarLabelPosition: 'beside-icon',
-
-          // ------------------------------------
-
           tabBarInactiveTintColor: Colors[theme.dark ? 'dark' : 'light'].tabIconDefault,
           tabBarStyle: styles.tabBar,
           tabBarBackground: () =>
             Platform.OS === 'android' ? null : (
-              <BlurView
-                intensity={60}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0
-                }}
-              />
+              <BlurView intensity={60} style={StyleSheet.absoluteFill} />
             )
         }
       }}
