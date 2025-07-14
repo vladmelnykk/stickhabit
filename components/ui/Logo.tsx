@@ -1,10 +1,11 @@
+import { Colors } from '@/constants/Colors'
+import { useColorScheme } from '@/hooks/useColorScheme'
 import React from 'react'
-import { Image, StyleSheet } from 'react-native'
+import Icon from './Icon'
 
 const Logo = () => {
-  return <Image style={styles.logo} source={require('../../assets/icons/adaptive-icon.png')} />
+  const theme = useColorScheme()
+  return <Icon name="logo" color={Colors[theme].tint} size={40} />
 }
 
 export default Logo
-
-const styles = StyleSheet.create({ logo: { width: 38, height: 38 } })

@@ -50,3 +50,4 @@ export type IconName =
   | 'trash-2'
   | 'trending-up'
   | 'x'
+  | 'logo'
