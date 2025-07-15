@@ -17,7 +17,7 @@ interface TodayRouteProps {
 }
 
 const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef }) => {
-  const data = useStore(state => state.habits)
+  const habits = useStore(state => state.habits)
   const tabBarHeight = useBottomTabBarHeight()
   const { t } = useTranslation()
 
@@ -35,9 +35,9 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
     const getTodayHabits = () => {
       const today = new Date()
 
-      if (data === null || data.length === 0) return
+      if (habits === null || habits.length === 0) return
 
-      const todayHabits = data.filter(habit => {
+      const todayHabits = habits.filter(habit => {
         return habit.daysOfWeek.includes(today.getDay()) && habit.isArchived === false
       })
 
@@ -87,7 +87,7 @@ const TodayRoute: React.FC<TodayRouteProps> = ({ setProgress, route, setListRef 
     }
 
     getTodayHabits()
-  }, [data, setProgress])
+  }, [habits, setProgress])
 
   return (
     <Animated.ScrollView
