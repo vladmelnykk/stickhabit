@@ -7,9 +7,10 @@ import { habitSchema } from '@/db/schema/habits'
 import { useDatabase } from '@/providers/DatabaseProvider'
 import { TodayHabit } from '@/types/global'
 import { eq } from 'drizzle-orm'
+import { router } from 'expo-router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import ReanimatedSwipeable, {
   type SwipeableMethods
 } from 'react-native-gesture-handler/ReanimatedSwipeable'
@@ -108,7 +109,10 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
   }
 
   return (
-    <View style={styles.renderItemContainer}>
+    <Pressable
+      style={styles.renderItemContainer}
+      onLongPress={() => router.navigate(`/habit/${habit.id}`)}
+    >
       <ProgressHabitCard
         color={habit.color}
         title={habit.title}
@@ -127,7 +131,7 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
         onSwipeableOpen={handleSwipe}
       />
       <View style={styles.cardOverlay} />
-    </View>
+    </Pressable>
   )
 }
 

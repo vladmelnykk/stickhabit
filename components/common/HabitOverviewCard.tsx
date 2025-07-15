@@ -21,7 +21,9 @@ const HabitOverviewCard: React.FC<HabitOverviewCardProps> = ({ children, habit }
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].secondary }]}>
       <View style={styles.header}>
-        <ThemedText type="subtitle">{habit.title}</ThemedText>
+        <ThemedText numberOfLines={1} style={styles.title} type="subtitle">
+          {habit.title}
+        </ThemedText>
         <ThemedText
           type="default"
           lightColor={Colors['light'].textSecondary}
@@ -48,7 +50,11 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    gap: 8
+  },
+  title: {
+    flexShrink: 1
   },
   line: {
     height: StyleSheet.hairlineWidth

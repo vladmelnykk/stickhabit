@@ -14,7 +14,9 @@ const ProgressHabitCard: React.FC<HabitCardProps> = ({ title, color, goal, progr
   const { t } = useTranslation()
   return (
     <View style={[styles.container, { backgroundColor: color || '#fff' }]}>
-      <Text style={styles.title}>{title}</Text>
+      <Text numberOfLines={1} style={styles.title}>
+        {title}
+      </Text>
       <Text style={styles.progress}>
         {t('home.progress')} {progress} / {goal}
       </Text>
