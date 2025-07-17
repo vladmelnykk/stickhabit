@@ -17,7 +17,7 @@ const HabitOverviewCard: React.FC<HabitOverviewCardProps> = ({ children, habit }
     habit &&
     (habit.daysOfWeek.length < 7
       ? `${habit.daysOfWeek.length} ${t('statistics.daysPerWeek')}`
-      : t('statistics.everday'))
+      : t('statistics.everyday'))
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].secondary }]}>
       <View style={styles.header}>

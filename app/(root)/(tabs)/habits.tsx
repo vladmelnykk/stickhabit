@@ -2,7 +2,6 @@ import Header from '@/components/common/Header'
 import Icon from '@/components/ui/Icon'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { Colors } from '@/constants/Colors'
-import { FontFamily } from '@/constants/FontFamily'
 import { CONTAINER_PADDING } from '@/constants/global'
 import { habitSchema } from '@/db/schema/habits'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -47,7 +46,7 @@ const ListItem: React.FC<ListItemProps> = React.memo(({ color, id, theme, title 
         }}
         disabled={isActive}
       >
-        <ThemedText type="subtitle" darkColor="#000">
+        <ThemedText numberOfLines={1} style={styles.title} type="subtitle" darkColor="#000">
           {title}
         </ThemedText>
         <Pressable onPressIn={drag}>
@@ -149,10 +148,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    fontFamily: FontFamily.RobotoBold,
-    color: '#000'
+    flexShrink: 1
   },
   emptyListContainer: {
     flex: 1,

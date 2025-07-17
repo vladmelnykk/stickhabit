@@ -61,6 +61,7 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
       if (updatedDates) {
         if (updatedDates.times < habit.timesPerDay) {
           updatedDates.times += 1
+
           if (updatedDates.times === habit.timesPerDay) {
             Toast.show({
               type: 'success',
@@ -90,7 +91,7 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
     } else if (
       habit.completedDates.some(el => el.date === habit.currentDate.date && el.times > 0)
     ) {
-      const updatedDates = habit.completedDates.find(el => el.date === habit.currentDate.date)!
+      const updatedDates = habit.currentDate
 
       updatedDates.times -= 1
       if (updatedDates.times === 0) {

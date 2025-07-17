@@ -17,7 +17,6 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Calendar, CalendarProps } from 'react-native-calendars'
 import { MarkingProps } from 'react-native-calendars/src/calendar/day/marking'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-const DATE_TEXT_COLOR = '#fff'
 
 const initialDays = new Array(7).fill(false)
 
@@ -41,7 +40,7 @@ const Page = () => {
     habit &&
     (habit.daysOfWeek.length < 7
       ? `${habit.daysOfWeek.length} ${t('statistics.daysPerWeek')}`
-      : t('statistics.everday'))
+      : t('statistics.everyday'))
 
   const selectedDays = initialDays.map((_, index) => habit.daysOfWeek.includes(index))
 
@@ -50,13 +49,11 @@ const Page = () => {
 
     const formattedDate = format(date, 'yyyy-MM-dd')
     const isTodayDate = isToday(date)
-    const isThisMonth = date.getMonth() === new Date().getMonth()
 
     acc[formattedDate] = {
       selected: true,
       marked: isTodayDate,
       disableTouchEvent: true,
-      selectedTextColor: isThisMonth ? DATE_TEXT_COLOR : Colors[theme].textSecondary,
       customStyles: { container: styles.selectedContainer }
     }
 
@@ -75,7 +72,8 @@ const Page = () => {
     textMonthFontFamily: FontFamily.RobotoBold,
     monthTextColor: Colors[theme].text,
     calendarBackground: Colors[theme].background,
-    todayTextColor: Colors[theme].tint
+    todayTextColor: Colors[theme].tint,
+    weekVerticalMargin: 5
   } as CalendarProps['theme']
 
   const renderArrow: CalendarProps['renderArrow'] = direction => (
@@ -151,8 +149,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute'
+    justifyContent: 'center'
   },
   rightIcons: {
     flex: 1,
