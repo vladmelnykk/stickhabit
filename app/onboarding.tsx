@@ -16,7 +16,6 @@ import Animated, {
   useSharedValue
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
 const PAGINATION_WIDTH = 10
 const PAGINATION_GAP = 8
 
@@ -96,8 +95,10 @@ const Page = () => {
                   <Image style={styles.image} source={item.image} resizeMode="contain" />
                 </View>
                 <View style={styles.textContainer}>
-                  <ThemedText type="title">{item.title}</ThemedText>
-                  <ThemedText style={styles.description}>{item.description}</ThemedText>
+                  <ThemedText style={styles.textCenter} type="title">
+                    {item.title}
+                  </ThemedText>
+                  <ThemedText style={styles.textCenter}>{item.description}</ThemedText>
                 </View>
               </View>
             )
@@ -177,10 +178,9 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flex: 1,
+    gap: 8,
     width: WINDOW_WIDTH,
-    paddingHorizontal: CONTAINER_PADDING,
-    borderWidth: 1,
-    borderColor: 'red'
+    paddingHorizontal: CONTAINER_PADDING
   },
   imageContainer: {
     maxHeight: '80%',
@@ -193,10 +193,8 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   textContainer: {
-    // flex: 1,
     alignItems: 'center',
-    // justifyContent: 'center',
     gap: 8
   },
-  description: { textAlign: 'center' }
+  textCenter: { textAlign: 'center' }
 })

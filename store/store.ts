@@ -10,7 +10,7 @@ interface Store {
   onBoardingCompleted: boolean
   setOnBoardingCompleted: (onBoardingCompleted: boolean) => void
 
-  language: Language
+  language: Language | null
   setLanguage: (language: Language) => void
 
   /* <-- Habits --> */
@@ -24,10 +24,11 @@ export const useStore = create<Store>()(
       /* <-- Common --> */
       theme: 'system',
       setTheme: theme => set({ theme }),
+
       onBoardingCompleted: false,
       setOnBoardingCompleted: onBoardingCompleted => set({ onBoardingCompleted }),
 
-      language: 'en',
+      language: null,
       setLanguage: language => set({ language }),
 
       /* <-- Habits --> */
@@ -39,7 +40,8 @@ export const useStore = create<Store>()(
       storage: createJSONStorage(() => zustandStorage),
       partialize: state => ({
         theme: state.theme,
-        language: state.language
+        language: state.language,
+        onBoardingCompleted: state.onBoardingCompleted
       })
     }
   )

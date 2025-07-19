@@ -124,9 +124,7 @@ const Page = () => {
         leftIcon="arrow-left"
         onLeftPress={() => router.back()}
       />
-      <ThemedText style={{ textAlign: 'center' }}>
-        Your progress is always safe and in your hands.
-      </ThemedText>
+
       <View>
         {managementOptions.map(({ title, onPress, icon, color }) => (
           <Pressable
@@ -134,11 +132,19 @@ const Page = () => {
             key={title}
             style={({ pressed }) => [styles.itemContainer, { opacity: pressed ? 0.5 : 1 }]}
           >
-            <ThemedText type="subtitle">{title}</ThemedText>
-            <Icon name={icon} color={color || Colors[theme].text} />
+            <View style={styles.valueContainer}>
+              <Icon name={icon} color={color || Colors[theme].text} />
+              <ThemedText lightColor={color} darkColor={color} type="subtitle">
+                {title}
+              </ThemedText>
+            </View>
+            <Icon name={'chevron-right'} color={color || Colors[theme].text} />
           </Pressable>
         ))}
       </View>
+      <ThemedText style={{ textAlign: 'center' }}>
+        {t('settings.dataManagement.description')}
+      </ThemedText>
     </View>
   )
 }

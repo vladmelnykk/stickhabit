@@ -1,9 +1,8 @@
 import { Colors, DarkTheme, LightTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import '@/i18n'
-import i18n from '@/i18n'
-import LocaleConfig from '@/locales/calendar'
 import { useStore } from '@/store/store'
+import { getLocalLanguage, setAppLanguage } from '@/utils/language'
 import { ThemeProvider } from '@react-navigation/native'
 import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack } from 'expo-router'
@@ -22,10 +21,10 @@ Notifications.setNotificationHandler({
   })
 })
 
-const language = useStore.getState().language
+const storedLanguage = useStore.getState().language
 
-i18n.changeLanguage(language)
-LocaleConfig.defaultLocale = language || 'en'
+const language = storedLanguage || getLocalLanguage()
+setAppLanguage(language)
 
 SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {

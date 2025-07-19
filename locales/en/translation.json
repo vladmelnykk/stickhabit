@@ -120,6 +120,7 @@
     },
     "dataManagement": {
       "title": "Data Management",
+      "description": "Your progress is always safe and in your hands.",
       "export": "Export Data",
       "import": "Import Data",
       "clear": "Clear Data",

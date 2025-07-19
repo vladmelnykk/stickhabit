@@ -30,7 +30,7 @@ const Page = () => {
   const theme = useColorScheme()
   const { t } = useTranslation()
   const selectedTheme = useStore(state => state.theme)
-  const currentLanguage = useStore(state => state.language)
+  const currentLanguage = useStore(state => state.language) ?? 'en'
   const bottomSheetRef = React.useRef<BottomSheetMethods>(null)
   const [bottomSheetContentType, setBottomSheetContentType] =
     useState<BottomSheetContentType>('theme')
