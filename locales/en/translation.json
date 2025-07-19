@@ -1,4 +1,25 @@
 {
+  "onboarding": {
+    "getStarted": "Get Started",
+    "next": "Next",
+    "skip": "Skip",
+    "first": {
+      "title": "Welcome to StickHabit!",
+      "description": "Become a better version of yourself."
+    },
+    "second": {
+      "title": "Track Your Progress",
+      "description": "Stay on track with your habits and see your progress in real-time."
+    },
+    "third": {
+      "title": "Design Your Routine",
+      "description": "Create, customize, and manage habits easily."
+    },
+    "fourth": {
+      "title": "Your Data, Your Control",
+      "description": "Keep your habits private and secure. StickHabit respects your data and gives you full control. Import, export, or reset your data anytime. Your progress is always safe and in your hands."
+    }
+  },
   "home": {
     "title": "Home",
     "today": "Today",

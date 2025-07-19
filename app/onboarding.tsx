@@ -3,10 +3,11 @@ import ThemedButton from '@/components/ui/ThemedButton'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { Colors } from '@/constants/Colors'
 import { CONTAINER_PADDING, WINDOW_WIDTH } from '@/constants/global'
-import { ONBOARDING_PAGES } from '@/constants/onbording'
+import { ONBOARDING_PAGES } from '@/constants/onboarding'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useStore } from '@/store/store'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Image, StyleSheet, View } from 'react-native'
 import Animated, {
   interpolate,
@@ -32,6 +33,7 @@ const outputRange = Array.from({ length: ONBOARDING_PAGES.length * 2 - 1 }, (_, 
 const Page = () => {
   const insets = useSafeAreaInsets()
   const theme = useColorScheme()
+  const { t } = useTranslation()
   const setOnBoardingCompleted = useStore(state => state.setOnBoardingCompleted)
   const [activeIndex, setActiveIndex] = React.useState(0)
   const flatListRef = React.useRef<Animated.FlatList<(typeof ONBOARDING_PAGES)[0]>>(null)
@@ -65,20 +67,20 @@ const Page = () => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <ScalePressable
-        style={[styles.skipButton, { top: insets.top + 16 }]}
-        onPress={() => {
-          setOnBoardingCompleted(true)
-        }}
-      >
-        <ThemedText type="defaultSemiBold">Skip</ThemedText>
-      </ScalePressable>
+      <View style={styles.skipContainer}>
+        <ScalePressable
+          onPress={() => {
+            setOnBoardingCompleted(true)
+          }}
+        >
+          <ThemedText type="defaultSemiBold">{t('onboarding.skip')}</ThemedText>
+        </ScalePressable>
+      </View>
       <View style={styles.boardingContainer}>
         <Animated.FlatList
           ref={flatListRef}
           data={ONBOARDING_PAGES}
           style={styles.flatList}
-          contentContainerStyle={styles.flatListContent}
           horizontal
           bounces={false}
           overScrollMode="never"
@@ -90,14 +92,13 @@ const Page = () => {
           renderItem={({ item }) => {
             return (
               <View style={styles.itemContainer}>
-                <Image
-                  style={{ width: WINDOW_WIDTH, height: 300 }}
-                  source={{
-                    uri: 'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D'
-                  }}
-                />
-                <ThemedText type="title">{item.title}</ThemedText>
-                <ThemedText style={{ textAlign: 'center' }}>{item.description}</ThemedText>
+                <View style={styles.imageContainer}>
+                  <Image style={styles.image} source={item.image} resizeMode="contain" />
+                </View>
+                <View style={styles.textContainer}>
+                  <ThemedText type="title">{item.title}</ThemedText>
+                  <ThemedText style={styles.description}>{item.description}</ThemedText>
+                </View>
               </View>
             )
           }}
@@ -128,7 +129,7 @@ const Page = () => {
       >
         <ThemedButton
           style={styles.button}
-          title={isLastPage ? 'Get Started' : 'Next'}
+          title={isLastPage ? t('onboarding.getStarted') : t('onboarding.next')}
           primary
           onPress={handleNextPage}
         />
@@ -143,7 +144,6 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   boardingContainer: { flex: 1 },
   flatList: { flex: 1 },
-  flatListContent: { justifyContent: 'center', alignItems: 'center' },
   btnContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderTopWidth: StyleSheet.hairlineWidth
   },
-  skipButton: { position: 'absolute', right: 16, zIndex: 100 },
+  skipContainer: { flexDirection: 'row', justifyContent: 'flex-end', padding: 16 },
   button: { flex: 1 },
   activeIndicator: {
     width: 28,
@@ -176,10 +176,27 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   itemContainer: {
+    flex: 1,
     width: WINDOW_WIDTH,
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: CONTAINER_PADDING,
-    gap: 16
-  }
+    borderWidth: 1,
+    borderColor: 'red'
+  },
+  imageContainer: {
+    maxHeight: '80%',
+    flexShrink: 1,
+    flexGrow: 1,
+    width: '100%'
+  },
+  image: {
+    width: '100%',
+    height: '100%'
+  },
+  textContainer: {
+    // flex: 1,
+    alignItems: 'center',
+    // justifyContent: 'center',
+    gap: 8
+  },
+  description: { textAlign: 'center' }
 })
