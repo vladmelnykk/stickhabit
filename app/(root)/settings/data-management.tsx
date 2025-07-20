@@ -84,7 +84,6 @@ const Page = () => {
         text2: t('settings.dataManagement.toast.import.success')
       })
     } catch (err) {
-      console.log(err)
       Toast.show({
         type: 'error',
         text1: t('toast.error'),

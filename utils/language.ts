@@ -11,7 +11,6 @@ const getLocalLanguage = () => {
   const localLanguage = getLocales().find(l =>
     supportedLanguages.includes(l.languageCode as Language)
   )?.languageCode as Language
-  console.log('localLanguage', localLanguage)
 
   return localLanguage || 'en'
 }

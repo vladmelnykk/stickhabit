@@ -10,7 +10,7 @@ interface Store {
   onBoardingCompleted: boolean
   setOnBoardingCompleted: (onBoardingCompleted: boolean) => void
 
-  language: Language | null
+  language: Language
   setLanguage: (language: Language) => void
 
   /* <-- Habits --> */
@@ -28,7 +28,7 @@ export const useStore = create<Store>()(
       onBoardingCompleted: false,
       setOnBoardingCompleted: onBoardingCompleted => set({ onBoardingCompleted }),
 
-      language: null,
+      language: 'en',
       setLanguage: language => set({ language }),
 
       /* <-- Habits --> */

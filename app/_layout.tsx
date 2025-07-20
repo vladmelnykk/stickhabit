@@ -22,8 +22,9 @@ Notifications.setNotificationHandler({
 })
 
 const storedLanguage = useStore.getState().language
+const isFirstLaunch = !useStore.getState().onBoardingCompleted
 
-const language = storedLanguage || getLocalLanguage()
+const language = isFirstLaunch ? getLocalLanguage() : storedLanguage
 setAppLanguage(language)
 
 SplashScreen.preventAutoHideAsync()
