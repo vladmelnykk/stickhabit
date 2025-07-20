@@ -59,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({
       )}
 
       {/* Title */}
-      <ThemedText type="title" style={styles.title}>
+      <ThemedText numberOfLines={1} adjustsFontSizeToFit type="title" style={styles.title}>
         {title}
       </ThemedText>
 

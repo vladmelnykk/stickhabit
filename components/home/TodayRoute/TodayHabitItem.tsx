@@ -58,11 +58,9 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
   const handleSwipe = async (direction: string) => {
     if (direction === 'left') {
       const updatedDates = habit.completedDates.find(el => el.date === habit.currentDate.date)
-
       if (updatedDates) {
         if (updatedDates.times < habit.timesPerDay) {
           updatedDates.times += 1
-
           if (updatedDates.times === habit.timesPerDay) {
             Toast.show({
               type: 'success',
@@ -81,6 +79,13 @@ const TodayHabitItem: React.FC<HabitItemProps> = ({ habit }) => {
         }
       } else {
         habit.completedDates.push({ date: new Date().getTime(), times: 1 })
+        if (habit.timesPerDay === 1) {
+          Toast.show({
+            type: 'success',
+            text1: t('toast.success'),
+            text2: t('home.toast.today.success', { title: habit.title })
+          })
+        }
       }
 
       await db
