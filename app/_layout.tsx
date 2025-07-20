@@ -1,35 +1,36 @@
 import { Colors, DarkTheme, LightTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import '@/i18n'
-import i18n from '@/i18n'
-import LocaleConfig from '@/locales/calendar'
-import SQLiteProvider from '@/providers/DatabaseProvider'
 import { useStore } from '@/store/store'
+import { getLocalLanguage, setAppLanguage } from '@/utils/language'
 import { ThemeProvider } from '@react-navigation/native'
 import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack } from 'expo-router'
 import * as SystemUI from 'expo-system-ui'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { StatusBar, StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: false
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true
   })
 })
 
-const language = useStore.getState().language
+const storedLanguage = useStore.getState().language
+const isFirstLaunch = !useStore.getState().onBoardingCompleted
 
-i18n.changeLanguage(language)
-LocaleConfig.defaultLocale = language || 'en'
+const language = isFirstLaunch ? getLocalLanguage() : storedLanguage
+setAppLanguage(language)
 
 SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
   const theme = useColorScheme()
+  const onBoardingCompleted = useStore(state => state.onBoardingCompleted)
   const toastConfig = useMemo(
     () => ({
       success: (props: any) => (
@@ -67,7 +68,11 @@ export default function RootLayout() {
   )
 
   SystemUI.setBackgroundColorAsync(Colors[theme].background)
-
+  useEffect(() => {
+    if (!onBoardingCompleted) {
+      SplashScreen.hideAsync()
+    }
+  }, [onBoardingCompleted])
   return (
     <GestureHandlerRootView style={styles.container}>
       <ThemeProvider value={theme === 'dark' ? DarkTheme : LightTheme}>
@@ -75,13 +80,16 @@ export default function RootLayout() {
           backgroundColor={Colors[theme].background}
           barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
         />
-        <SQLiteProvider>
-          <Stack
-            screenOptions={{
-              headerShown: false
-            }}
-          />
-        </SQLiteProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          {/* Use protected routes */}
+          <Stack.Protected guard={onBoardingCompleted}>
+            <Stack.Screen name="(root)" />
+          </Stack.Protected>
+
+          <Stack.Protected guard={!onBoardingCompleted}>
+            <Stack.Screen name="onboarding" />
+          </Stack.Protected>
+        </Stack>
         <Toast config={toastConfig} visibilityTime={1500} swipeable={false} />
       </ThemeProvider>
     </GestureHandlerRootView>

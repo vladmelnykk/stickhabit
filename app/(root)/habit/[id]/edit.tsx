@@ -33,7 +33,7 @@ type EditFormData = {
   reminders: Date[]
 }
 
-const initalData: EditFormData = {
+const initialData: EditFormData = {
   title: '',
   color: null,
   reminders: []
@@ -56,7 +56,7 @@ const Page = () => {
   const [editFormData, setEditFormData] = useState<Partial<EditFormData>>({})
 
   const formData = {
-    ...initalData,
+    ...initialData,
     title: habit?.title || '',
     color: habit?.color || null,
     reminders: habit?.notificationTime.map(time => new Date(time)) || [],
