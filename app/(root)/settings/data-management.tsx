@@ -83,7 +83,7 @@ const Page = () => {
         text1: t('toast.success'),
         text2: t('settings.dataManagement.toast.import.success')
       })
-    } catch (err) {
+    } catch {
       Toast.show({
         type: 'error',
         text1: t('toast.error'),

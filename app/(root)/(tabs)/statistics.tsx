@@ -23,7 +23,7 @@ const Page = () => {
 
   const habits = useStore(state => state.habits)
 
-  const statistics = useMemo(() => calculateStatistics(habits), [habits])
+  const statistics = useMemo(() => calculateStatistics({ habits }), [habits])
 
   const chartRange = ChartRange.map((label, index) => ({
     value: index,

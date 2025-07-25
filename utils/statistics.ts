@@ -23,25 +23,21 @@ const localeMap: Record<Language, Locale> = {
   uk: uk
 }
 
-function calculateStatistics(habits: Habit[]) {
+// habits: Habit[], from?: Date, to?: Date
+
+type CalculateStatisticsParams = { habits: Habit[]; from?: Date; to?: Date }
+
+function calculateStatistics({ habits, from, to }: CalculateStatisticsParams) {
   const minCreatedAt = Math.min(...habits.map(habit => habit.createdAt))
-  const startDate = new Date(minCreatedAt)
+  const startDate = from ?? new Date(minCreatedAt)
   startDate.setHours(0, 0, 0, 0)
 
-  const endDate = new Date()
+  const endDate = to ?? new Date()
   endDate.setHours(0, 0, 0, 0)
 
   let totalScheduled = 0
   let totalCompleted = 0
   const perfectDays: { date: Date; perfect: boolean }[] = []
-
-  function isSameDay(d1: Date, d2: Date): boolean {
-    return (
-      d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate()
-    )
-  }
 
   for (let d = new Date(startDate); d.getTime() <= endDate.getTime(); d.setDate(d.getDate() + 1)) {
     let dayScheduled = 0
@@ -81,20 +77,9 @@ function calculateStatistics(habits: Habit[]) {
 
     const perfect = dayScheduled > 0 && dayCompleted === dayScheduled
     perfectDays.push({ date: new Date(d), perfect })
-
-    // if (perfect) {
-    //   currentStreak++
-    // }
   }
 
-  // const todayIsPerfect = perfectDays[perfectDays.length - 1]?.perfect
-
-  // if (!todayIsPerfect) {
-  //   currentStreak = perfectDays.filter(day => day.perfect).length
-  // }
-
   const totalPerfectDays = perfectDays.filter(day => day.perfect).length
-  // console.log(perfectDays)
 
   let currentStreak = 0
 
@@ -108,7 +93,7 @@ function calculateStatistics(habits: Habit[]) {
       return isScheduled && isCreatedBefore
     })
 
-    const isToday = isSameDay(date, new Date())
+    const isToday = isSameDay(date, endDate)
 
     if (dayHasHabits && !perfect && !isToday) break
     if (dayHasHabits && perfect) currentStreak++
@@ -126,9 +111,10 @@ function calculateStatistics(habits: Habit[]) {
 function calculateCompletedHabitsForChart(
   habits: Habit[],
   selectedRangeIndex: number,
-  lng: Language
+  lng: Language,
+  currentTime?: Date
 ) {
-  const now = new Date()
+  const now = currentTime ?? new Date()
   const data: (barDataItem & Required<Pick<barDataItem, 'value'>>)[] = []
   const locale = localeMap[lng] || localeMap.en
 
@@ -172,6 +158,8 @@ function calculateCompletedHabitsForChart(
     days.forEach(day => {
       const label = format(day, 'd', { locale }) // Just the day number
       const value = getCompletedCountForDate(day)
+      if (value === 0 && !isSameDay(day, now)) return
+
       data.push({ label, value })
     })
   }
@@ -185,6 +173,7 @@ function calculateCompletedHabitsForChart(
     days.forEach(day => {
       const label = format(day, 'd', { locale })
       const value = getCompletedCountForDate(day)
+      if (value === 0) return
       data.push({ label, value })
     })
   }
@@ -234,6 +223,8 @@ function calculateCompletedHabitsForChart(
 
   if (ChartRange[selectedRangeIndex] === 'allTime') {
     const years = new Set<number>()
+
+    // Collect all years in which habits were completed
     habits.forEach(habit => {
       habit.completedDates.forEach(entry => {
         years.add(new Date(entry.date).getFullYear())
@@ -253,6 +244,7 @@ function calculateCompletedHabitsForChart(
         data.push({ label: String(year), value: days.length })
       })
   }
+
   const maxValue = Math.max(...data.map(item => item.value))
 
   return {
@@ -264,9 +256,10 @@ function calculateCompletedHabitsForChart(
 function calculateCompletionRateForChart(
   habits: Habit[],
   selectedRangeIndex: number,
-  lng: Language
+  lng: Language,
+  currentDate?: Date
 ) {
-  const now = new Date()
+  const now = currentDate ?? new Date()
   const data: (barDataItem & Required<Pick<barDataItem, 'value'>>)[] = []
   const locale = localeMap[lng] || localeMap.en
 

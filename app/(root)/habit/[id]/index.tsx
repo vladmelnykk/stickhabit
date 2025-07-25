@@ -34,7 +34,7 @@ const Page = () => {
     return <Redirect href="/habits" />
   }
 
-  const statistics = calculateStatistics([habit])
+  const statistics = calculateStatistics({ habits: [habit] })
 
   const frequency =
     habit &&
