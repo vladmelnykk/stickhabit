@@ -3,7 +3,7 @@ import { useStore } from '@/store/store'
 import { Theme } from '@/types/global'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { Appearance, StyleSheet, View } from 'react-native'
 import RadioButton from '../ui/RadioButton'
 
 const ThemePicker = () => {
@@ -13,6 +13,7 @@ const ThemePicker = () => {
 
   const onPress = (value: Theme) => {
     setTheme(value)
+    Appearance.setColorScheme(value === 'system' ? null : value)
   }
   return (
     <View style={styles.radioButtonGroup}>

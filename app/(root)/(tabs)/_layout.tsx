@@ -25,7 +25,11 @@ export default function TabLayout() {
           tabBarStyle: styles.tabBar,
           tabBarBackground: () =>
             Platform.OS === 'android' ? null : (
-              <BlurView intensity={60} style={StyleSheet.absoluteFill} />
+              <BlurView
+                intensity={60}
+                tint={theme.dark ? 'dark' : 'light'}
+                style={StyleSheet.absoluteFill}
+              />
             )
         }
       }}
